@@ -1,3 +1,9 @@
+# m44 data
 sed_data.json
 board_size.json
-test.m44
+
+# tiles
+countryside.png
+
+# maps
+*.m44

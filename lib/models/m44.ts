@@ -1,6 +1,59 @@
 import * as t from "io-ts";
 import { EUnitName } from "./shared";
 
+export const Board = t.strict({
+    type: t.string,
+    face: t.string,
+    hexagons: t.array(t.strict({
+        row: t.number,
+        col: t.number,
+        obstacle: t.union([
+            t.undefined,
+            t.strict({
+                name: t.string,
+                orientation: t.union([
+                    t.undefined,
+                    t.number
+                ])
+            })
+        ]),
+        unit: t.union([
+            t.undefined,
+            t.strict({
+                name: EUnitName,
+                badge: t.union([t.undefined, t.string]),
+                nbr_units: t.union([t.undefined, t.string])
+            })
+        ]),
+        rect_terrain: t.union([
+            t.undefined,
+            t.strict({
+                name: t.string,
+                orientation: t.union([t.undefined, t.number])
+            })
+        ]),
+        terrain: t.union([
+            t.undefined,
+            t.strict({
+                name: t.string
+            })
+        ]),
+        tags: t.union([
+            t.undefined,
+            t.array(t.strict({
+                name: t.string
+            }))
+        ]),
+    })),
+    labels: t.array(t.strict({
+        row: t.number,
+        col: t.number,
+        text: t.array(t.string)
+    }))
+});
+
+export type Board = t.TypeOf<typeof Board>;
+
 export const M44 = t.strict({
     meta_data: t.strict({
         status: t.string,
@@ -20,56 +73,7 @@ export const M44 = t.strict({
         victory_player1: t.number,
         victory_player2: t.number
     }),
-    board: t.strict({
-        type: t.string,
-        face: t.string,
-        hexagons: t.array(t.strict({
-            row: t.number,
-            col: t.number,
-            obstacle: t.union([
-                t.undefined,
-                t.strict({
-                    name: t.string,
-                    orientation: t.union([
-                        t.undefined,
-                        t.number
-                    ])
-                })
-            ]),
-            unit: t.union([
-                t.undefined,
-                t.strict({
-                    name: EUnitName,
-                    badge: t.union([t.undefined, t.string]),
-                    nbr_units: t.union([t.undefined, t.string])
-                })
-            ]),
-            rect_terrain: t.union([
-                t.undefined,
-                t.strict({
-                    name: t.string,
-                    orientation: t.union([t.undefined, t.number])
-                })
-            ]),
-            terrain: t.union([
-                t.undefined,
-                t.strict({
-                    name: t.string
-                })
-            ]),
-            tags: t.union([
-                t.undefined,
-                t.array(t.strict({
-                    name: t.string
-                }))
-            ]),
-        })),
-        labels: t.array(t.strict({
-            row: t.number,
-            col: t.number,
-            text: t.array(t.string)
-        }))
-    }),
+    board: Board,
     packs: t.strict({
         base: t.union([t.undefined, t.number]),
         terrain: t.union([t.undefined, t.number]),

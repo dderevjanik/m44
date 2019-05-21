@@ -22,7 +22,7 @@ export const ELocale = t.union([
     t.literal("sv"),
     t.literal("no"),
     t.literal("el"),
-    t.literal("c")
+    t.literal("c") // other
 ]);
 
 export const Language = t.strict({

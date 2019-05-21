@@ -17,6 +17,29 @@ import {
     Side
 } from "./shared";
 
+export const BoardSize = t.strict({
+    value: t.string, // type
+    nbrCols: t.string, // number
+    nbrRows: t.string, // number
+    width: t.string, // number
+    height: t.string, // number
+    access: t.string,
+    label: t.string,
+    hexagons: t.strict({
+        item: t.array(t.strict({
+            col: t.string, // number
+            row: t.string, // number
+            posX: t.string, // number
+            posY: t.string, // number
+            _type: t.string
+        })),
+        _type: t.string
+    }),
+    _type: t.string
+});
+
+export type BoardSize = t.TypeOf<typeof BoardSize>;
+
 export const SedData = t.strict({
     editor: t.strict({
         language: t.string,
@@ -205,29 +228,12 @@ export const SedData = t.strict({
                 _type: t.string
             }),
             board_size: t.strict({
-                list: t.dictionary(t.string, t.union([
-                    t.strict({
-                        value: t.string, // type
-                        nbrCols: t.string, // number
-                        nbrRows: t.string, // number
-                        width: t.string, // number
-                        height: t.string, // number
-                        access: t.string,
-                        label: t.string,
-                        hexagons: t.strict({
-                            item: t.array(t.strict({
-                                col: t.string, // number
-                                row: t.string, // number
-                                posX: t.string, // number
-                                posY: t.string, // number
-                                _type: t.string
-                            })),
-                            _type: t.string
-                        }),
-                        _type: t.string
-                    }),
-                    t.string, // _type
-                ])),
+                list: t.strict({
+                    standard: BoardSize,
+                    overlord: BoardSize,
+                    brkthru: BoardSize,
+                    _type: t.string
+                }),
                 _type: t.string
             }),
             _type: t.string

@@ -1,0 +1,33 @@
+{
+  "name": "m44",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "@types/node": "^12.0.2",
+    "@types/sharp": "^0.22.2",
+    "io-ts": "^1.8.6",
+    "io-ts-reporters": "^0.0.21",
+    "sharp": "^0.22.1",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.4.5",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dderevjanik/m44.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dderevjanik/m44/issues"
+  },
+  "homepage": "https://github.com/dderevjanik/m44#readme"
+}
