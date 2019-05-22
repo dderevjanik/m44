@@ -35,7 +35,8 @@ export const Board = t.strict({
         terrain: t.union([
             t.undefined,
             t.strict({
-                name: t.string
+                name: t.string,
+                orientation: t.union([t.undefined, t.number])
             })
         ]),
         tags: t.union([

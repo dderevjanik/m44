@@ -6,52 +6,57 @@ import sharp = require("sharp");
 import { Board } from "./models/board";
 import { config } from "./config";
 
-const sedData = JSON.parse(readFileSync("../data/sed_data.json").toString()) as SedData;
-const testMap = JSON.parse(readFileSync("../data/Across the Meuse - May 13, 1940.m44").toString()) as M44;
+import log4js from "log4js";
+import { App } from "./app";
+import { ImageRepo } from "./repo/image-repo";
 
-const sedDataResult = SedData.decode(sedData);
-const testMapResult = M44.decode(testMap);
+log4js.configure(config.log4js);
+const log = log4js.getLogger("APP");
 
-console.log(reporters.reporter(sedDataResult));
-console.log(reporters.reporter(testMapResult));
-
-const board = sedData.editor.board_settings.board_size.list.standard;
-const b = new Board({
-    boardSize: board,
-    boardFace: sedData.editor.board_settings.board_face
-});
+const sedDataPath = "../data/sed_data.json";
+const testMapPath = "../data/Red Barricades Factory.m44";
 
 (async function () {
-    const hexCountry = await sharp("../data/countryside.png").resize(
-        config.board.hexSize[0],
-        config.board.hexSize[1]
-    ).toBuffer();
 
-    const s = sharp({
-        create: {
-            background: { r: 0, g: 0, b: 0 },
-            channels: 4,
-            height: parseInt(board.height) * 3,
-            width: parseInt(board.width) * 3
-        }
-    });
-    // s.composite(testMap.board.hexagons.map(h => {
-    //     const hex = b.get(h.row, h.col);
-    //     return {
-    //         input: hexCountry,
-    //         top: parseInt(hex.posY),
-    //         left: parseInt(hex.posX)
+    const imgRepo = new ImageRepo(config.imageRepo);
+
+
+    const app = new App(imgRepo, {});
+    app.loadSedData(sedDataPath);
+    app.loadScenario(testMapPath);
+    await app.drawScenario();
+
+    // const hexCountry = await sharp("../data/countryside.png").resize(
+    //     config.board.hex_size[0],
+    //     config.board.hex_size[1]
+    // ).toBuffer();
+
+    // // log.debug("[SHARP] Initializing blank image");
+    // const s = sharp({
+    //     create: {
+    //         background: { r: 0, g: 0, b: 0 },
+    //         channels: 4,
+    //         height: parseInt(board.height) * 3,
+    //         width: parseInt(board.width) * 3
     //     }
-    // }));
-
-    // testMap.board.hexagons.forEach(h => {
-    //     const hex = b.get(h.row, h.col);
-    //     s.composite([{
-    //         input: hexCountry,
-    //         top: parseInt(hex.posY),
-    //         left: parseInt(hex.posX)
-    //     }])
     // });
+    // // s.composite(testMap.board.hexagons.map(h => {
+    // //     const hex = b.get(h.row, h.col);
+    // //     return {
+    // //         input: hexCountry,
+    // //         top: parseInt(hex.posY),
+    // //         left: parseInt(hex.posX)
+    // //     }
+    // // }));
 
-    s.toFile("output.png");
+    // // testMap.board.hexagons.forEach(h => {
+    // //     const hex = b.get(h.row, h.col);
+    // //     s.composite([{
+    // //         input: hexCountry,
+    // //         top: parseInt(hex.posY),
+    // //         left: parseInt(hex.posX)
+    // //     }])
+    // // });
+    // // log.debug("[SHARP] saving to file ./output.png");
+    // s.toFile("output.png");
 })();

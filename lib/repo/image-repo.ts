@@ -1,6 +1,9 @@
 import fs, { createWriteStream } from "fs";
+import * as log4js from "log4js";
 import path from "path";
 import { fetchFile } from "../utils/fetch";
+
+const log = log4js.getLogger("IMG-REPO");
 
 interface ImageRepoConf {
     dataUrl: string;
@@ -10,11 +13,15 @@ interface ImageRepoConf {
 export class ImageRepo {
 
     private _conf: ImageRepoConf;
-    private _cache: { [imageName: string]: Buffer };
+    private _memCache: { [imageName: string]: Buffer };
 
     constructor(conf: ImageRepoConf) {
         this._conf = conf;
-        this._cache = {};
+        this._memCache = {};
+
+        if (!fs.existsSync(conf.imageDir)) {
+            fs.mkdirSync(conf.imageDir);
+        }
     }
 
     async get(imageName: string) {
@@ -25,26 +32,29 @@ export class ImageRepo {
         }
         const filePath = path.join(imageDir, fileName);
 
-        if (imageName in this._cache) {
-            return this._cache[imageName];
+        if (imageName in this._memCache) {
+            return this._memCache[imageName];
         } else if (fs.existsSync(filePath)) {
             const image = fs.readFileSync(filePath);
-            this._cache[imageName] = image;
+            this._memCache[imageName] = image;
             return image;
         } else {
             await this._fetch(imageName);
             const image = fs.readFileSync(filePath);
-            this._cache[imageName] = image;
+            this._memCache[imageName] = image;
             return image;
         }
     }
 
     async _fetch(imageName: string): Promise<void> {
-        const { dataUrl } = this._conf;
-        const url = dataUrl + imageName;
+        const { dataUrl, imageDir } = this._conf;
 
-        const ws = createWriteStream(path.join())
+        const fileName = imageName.split("/").pop();
+        const ws = createWriteStream(path.join(imageDir, fileName!));
+
+        const url = dataUrl + imageName;
         await fetchFile(url, ws);
+        log.info(`fetched ${url}`);
     }
 
 }

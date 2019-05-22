@@ -1,6 +1,7 @@
 import { SedData, BoardSize } from "./sed_data";
 
 type BoardSettings = SedData["editor"]["board_settings"];
+type Hexagon = BoardSize["hexagons"]["item"][0];
 
 export interface BoardConf {
     boardSize: BoardSize;
@@ -12,7 +13,7 @@ export class Board {
     _conf: BoardConf;
     _board: {
         [row: number]: {
-            [col: number]: BoardSize["hexagons"]["item"][0];
+            [col: number]: Hexagon;
         };
     };
 
@@ -41,6 +42,15 @@ export class Board {
         } else {
             throw new Error(`hexagon [${row}, ${col}] doesn't exists on board`);
         }
+    }
+
+    *all(): IterableIterator<Hexagon> {
+        for (const [row, cols] of Object.entries(this._board)) {
+            for (const [col, hex] of Object.entries(cols)) {
+                yield hex;
+            }
+        }
+
     }
 
 }

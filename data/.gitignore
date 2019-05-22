@@ -3,7 +3,7 @@ sed_data.json
 board_size.json
 
 # tiles
-countryside.png
+*.png
 
 # maps
 *.m44
