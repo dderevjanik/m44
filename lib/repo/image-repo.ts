@@ -20,6 +20,7 @@ export class ImageRepo {
         this._memCache = {};
 
         if (!fs.existsSync(conf.imageDir)) {
+            log.debug(`imageDir doens't exists, creating "${conf.imageDir}"`);
             fs.mkdirSync(conf.imageDir);
         }
     }
@@ -53,7 +54,12 @@ export class ImageRepo {
         const ws = createWriteStream(path.join(imageDir, fileName!));
 
         const url = dataUrl + imageName;
-        await fetchFile(url, ws);
+        try {
+            await fetchFile(url, ws);
+        } catch(err) {
+            log.error(`Cannot fetch "${imageName}", ${err}`);
+            throw new Error("cannot_fetch");
+        }
         log.info(`fetched ${url}`);
     }
 

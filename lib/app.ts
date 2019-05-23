@@ -1,27 +1,33 @@
-import fs from "fs";
-import log4js from "log4js";
+import log4js, { Logger } from "log4js";
 import Jimp from "jimp";
-import t from "io-ts";
-import * as reporters from "io-ts-reporters";
 import { SedData } from "./models/sed_data";
 import { M44 } from "./models/m44";
 import { ImageRepo } from "./repo/image-repo";
 import { Board } from "./models/board";
-import { config } from "./config";
+import { config, Config } from "./config";
+import { fileLoader } from "./utils/file-loader";
+import { IconRepo } from "./utils/icon-repo";
+import { IconDict } from "./utils/icon-dict";
+import { Measure } from "./utils/measure";
+import { Renderer } from "./utils/renderer";
 
 const log = log4js.getLogger("APP");
 
-function replaceAt(str: string, index: number, replacement: string) {
-    return str.substr(0, index) + replacement + str.substr(index + replacement.length);
-}
+type RenderLayers = "terrain"
+    | "rect_terrain"
+    | "obstacle"
+    | "tags"
+    | "unit"
+    | "label";
 
-export interface AppConf {
+export interface AppConf extends Config {
 
 }
 
 export class App {
 
     _imageRepo: ImageRepo;
+    _conf: AppConf;
 
     _sedData: SedData | null;
     _scenario: M44 | null;
@@ -30,85 +36,34 @@ export class App {
         this._sedData = null;
         this._scenario = null;
 
+        this._conf = conf;
         this._imageRepo = imageRepo;
     }
 
     loadSedData(filePath: string) {
-        log.debug(`loading sed_data from "${filePath}"`);
-        if (!fs.existsSync(filePath)) {
-            log.error(`Path is not correct "${filePath}"`);
-            throw new Error("incorrect_path");
-        }
-
-        let file: Buffer;
-        let sedData: SedData;
-        try {
-            file = fs.readFileSync(filePath);
-        } catch(err) {
-            log.error(`Cannot read file "${filePath}" \n ${err}`);
-            throw new Error("cannot_read_file");
-        }
-
-        try {
-            sedData = JSON.parse(file.toString());
-        } catch(err) {
-            log.error(`Cannot parse file "${filePath}"`);
-            throw new Error("cannot_parse_file");
-        }
-
-        const result = SedData.decode(sedData);
-        const report = reporters.reporter(result);
-        if (report.length) {
-            log.error(`Cannot decode JSON, ${JSON.stringify(report)}`);
-            throw new Error("cannot_decode");
-        }
-
+        const measure = new Measure();
+        const sedData = fileLoader(filePath, SedData);
         this._sedData = sedData;
-        log.info("sedData loaded sucessfully");
+        log.info(`SedData loaded and decoded successfully in ${measure.end()}ms`);
     }
 
     loadScenario(filePath: string) {
-        log.debug(`loading scenario file from "${filePath}"`);
-        if (!fs.existsSync(filePath)) {
-            log.error(`Path is not correct "${filePath}"`);
-            throw new Error("incorrect_path");
-        }
-
-
-        let file: Buffer;
-        let scenarioData: M44;
-        try {
-            file = fs.readFileSync(filePath);
-        } catch(err) {
-            log.error(`Cannot read file "${filePath}" \n ${err}`);
-            throw new Error("cannot_read_file");
-        }
-
-        try {
-            scenarioData = JSON.parse(file.toString());
-        } catch(err) {
-            log.error(`Cannot parse file "${filePath}"`);
-            throw new Error("cannot_parse_file");
-        }
-
-        const result = M44.decode(scenarioData);
-        const report = reporters.reporter(result);
-        if (report.length) {
-            log.error(`Cannot decode JSON, ${JSON.stringify(report)}`);
-            throw new Error("cannot_decode");
-        }
-
-        this._scenario = scenarioData;
-        log.info("scenario loaded successfully");
+        const measure = new Measure();
+        const scenario = fileLoader(filePath, M44);
+        this._scenario = scenario;
+        log.info(`Scenario loaded and decoded successfully in ${measure.end()}ms`);
     }
 
     async drawScenario() {
+        const { _conf } = this;
+
         log.debug("drawing scenario");
         const sedData = this._sedData;
         const scenario = this._scenario;
 
         if (sedData === null || scenario === null) {
-            throw new Error("not_initialized");
+            log.error("Please intialize both sedData and scenario before drawScenario()");
+            throw new Error("data_or_scenario_not_initialized");
         }
 
         const board = new Board({
@@ -118,204 +73,95 @@ export class App {
 
         const size = config.board.board_sizes.standartd;
 
-        log.debug("rendering background");
-        const bckg = new Jimp(size[0], size[1], "#000");
+        log.debug("creating dictionary of all icons with their names");
+        const iconDict = new IconDict();
 
-        log.debug("rendering default hexes");
-        const blank = await Jimp.read("../data/snow.png");
-        for (const hex of board.all()) {
-            await bckg.composite(blank, parseInt(hex.posX), parseInt(hex.posY));
+        log.debug("creating terrain dictionary");
+        for (const category of sedData.editor.terrain.item) {
+            for (const terrain of category.list.item) {
+                iconDict.set(terrain.name, terrain.icon);
+            }
         }
 
-        log.debug("creating terrain->icon dictionary");
-        const terrainDict = sedData.editor.terrain.item.reduce((acc1, category) => {
-            return {
-                ...acc1,
-                ...category.list.item.reduce((acc2, terrain) => {
-                    return {
-                        ...acc2,
-                        [terrain.name]: terrain.icon
-                    }
-                }, {})
+        log.debug("creating unit dictionary");
+        for (const category of sedData.editor.unit.item) {
+            for (const unit of category.list.item) {
+                iconDict.set(unit.name, unit.icon);
             }
-        }, {} as { [name: string]: string });
+        }
 
-        log.debug('creating unit->icon dictionary');
-        const unitDict = sedData.editor.unit.item.reduce((acc1, category) => {
-            return {
-                ...acc1,
-                ...category.list.item.reduce((acc2, unit) => {
-                    return {
-                        ...acc2,
-                        [unit.name]: unit.icon
-                    }
-                }, {})
+        log.debug("creating obstacle dictionary");
+        for (const category of sedData.editor.obstacle.item) {
+            for (const obstacle of category.list.item) {
+                iconDict.set(obstacle.name, obstacle.icon);
             }
-        }, {} as { [name: string]: string });
+        }
 
-        log.debug('creating obstacle->icon dictionary');
-        const obstacleDict = sedData.editor.obstacle.item.reduce((acc1, category) => {
-            return {
-                ...acc1,
-                ...category.list.item.reduce((acc2, obstacle) => {
-                    return {
-                        ...acc2,
-                        [obstacle.name]: obstacle.icon
-                    }
-                }, {})
+        log.debug("creating marker dictionary");
+        for (const category of sedData.editor.marker.item) {
+            for (const marker of category.list.item) {
+                iconDict.set(marker.name, marker.icon);
             }
-        }, {} as { [name: string]: string });
+        }
 
-        log.debug('creating tag->icon dictionary');
-        const tagDict = sedData.editor.marker.item.reduce((acc1, category) => {
-            return {
-                ...acc1,
-                ...category.list.item.reduce((acc2, tag) => {
-                    return {
-                        ...acc2,
-                        [tag.name]: tag.icon
-                    }
-                }, {})
-            }
-        }, {} as { [name: string]: string });
+        log.debug("creating badge dictionary");
+        for (const badge of sedData.editor.badges.item) {
+            iconDict.set(badge.name, badge.icon);
+        }
 
-        log.debug('creating badge->icon dictionary');
-        const badgeDict = sedData.editor.badges.item.reduce((acc1, badge) => {
-            return {
-                ...acc1,
-                [badge.name]: badge.icon
-            };
-        }, {} as { [name: string]: string });
+        const iconRepo = new IconRepo(this._imageRepo, iconDict);
 
+        const renderer = new Renderer(iconRepo, board, {
+            width: size[0],
+            height: size[1],
+            hexSize: config.board.hex_size
+        });
+        await renderer.loadFont(Jimp.FONT_SANS_32_BLACK);
 
-        log.debug("loading font");
-        const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
+        const fillMs = new Measure();
+        await renderer.fillBck("../data/snow.png");
+        log.info(`Background tiles rendered in ${fillMs.end()}ms`);
 
-        log.debug("rendering scenario tiles");
-        const imgRepo = this._imageRepo;
+        const renderLayers: string[] = _conf.l
+            ? _conf.l.split(",")
+            : ["terrain", "rect_terrain", "obstacle", "tags", "unit", "label"];
+
+        const renderMs = new Measure();
         for (const hex of scenario.board.hexagons) {
-            const boardHex = board.get(hex.row, hex.col);
-            if (hex.terrain) {
-                const icon = terrainDict[hex.terrain.name];
-                if (hex.terrain.orientation) {
-                    const rotatedIcon = replaceAt(
-                        icon,
-                        icon.length - 5, // river1.png -> riverX.png
-                        hex.terrain.orientation.toString()
-                    );
+            const { row, col } = hex;
 
-                    const img = await imgRepo.get(rotatedIcon);
-                    const j = await Jimp.read(img);
-                    await bckg.composite(j, parseInt(boardHex.posX), parseInt(boardHex.posY));
-                } else {
-                    const img = await imgRepo.get(icon);
-                    const j = await Jimp.read(img);
-                    await bckg.composite(j, parseInt(boardHex.posX), parseInt(boardHex.posY));
-                }
+            if (hex.terrain && renderLayers.includes("terrain")) {
+                await renderer.terrain(hex.terrain, row, col);
             }
-            if (hex.rect_terrain) {
-                const icon = obstacleDict[hex.rect_terrain.name];
-                if (hex.rect_terrain.orientation) {
-                    const rotatedIcon = replaceAt(
-                        icon,
-                        icon.length - 5, // river1.png -> riverX.png
-                        hex.rect_terrain.orientation.toString()
-                    );
-
-                    const img = await imgRepo.get(rotatedIcon);
-                    const j = await Jimp.read(img);
-                    await bckg.composite(j, parseInt(boardHex.posX), parseInt(boardHex.posY), {
-                        mode: Jimp.BLEND_SOURCE_OVER,
-                        opacityDest: 1,
-                        opacitySource: 0.7
-                    });
-                } else {
-                    const img = await imgRepo.get(icon);
-                    const j = await Jimp.read(img);
-                    await bckg.composite(j, parseInt(boardHex.posX), parseInt(boardHex.posY), {
-                        mode: Jimp.BLEND_SOURCE_OVER,
-                        opacityDest: 1,
-                        opacitySource: 0.7
-                    });
-                }
+            if (hex.rect_terrain && renderLayers.includes("rect_terrain")) {
+                await renderer.rectTerrain(hex.rect_terrain, row, col);
             }
-            if (hex.obstacle) {
-                const icon = obstacleDict[hex.obstacle.name];
-                if (hex.obstacle.orientation) {
-                    const rotatedIcon = replaceAt(
-                        icon,
-                        icon.length - 5, // river1.png -> riverX.png
-                        hex.obstacle.orientation.toString()
-                    );
-
-                    const img = await imgRepo.get(rotatedIcon);
-                    const j = await Jimp.read(img);
-                    await bckg.composite(j, parseInt(boardHex.posX), parseInt(boardHex.posY), {
-                        mode: Jimp.BLEND_SOURCE_OVER,
-                        opacityDest: 1,
-                        opacitySource: 0.7
-                    });
-                } else {
-                    const img = await imgRepo.get(icon);
-                    const j = await Jimp.read(img);
-                    await bckg.composite(j, parseInt(boardHex.posX), parseInt(boardHex.posY), {
-                        mode: Jimp.BLEND_SOURCE_OVER,
-                        opacityDest: 1,
-                        opacitySource: 0.7
-                    });
-                }
+            if (hex.obstacle && renderLayers.includes("obstacle")) {
+                await renderer.obstacle(hex.obstacle, row, col);
             }
-            if (hex.tags) {
+            if (hex.tags && renderLayers.includes("tags")) {
                 for (const tag of hex.tags) {
-                    const icon = tagDict[tag.name];
-                    const img = await imgRepo.get(icon);
-                    const j = await Jimp.read(img);
-
-                    await bckg.composite(j, parseInt(boardHex.posX), parseInt(boardHex.posY), {
-                        mode: Jimp.BLEND_SOURCE_OVER,
-                        opacityDest: 1,
-                        opacitySource: 0.8
-                    });
+                    await renderer.tags(tag, row, col);
                 }
             }
-            if (hex.unit) {
-                const icon = unitDict[hex.unit.name];
-                const img = await imgRepo.get(icon);
-                const j = await Jimp.read(img);
-
-                await bckg.composite(j, parseInt(boardHex.posX), parseInt(boardHex.posY), {
-                    mode: Jimp.BLEND_SOURCE_OVER,
-                    opacityDest: 1,
-                    opacitySource: 0.6
-                });
-
-                if (hex.unit.badge) {
-                    const icon = badgeDict[hex.unit.badge];
-                    const img = await imgRepo.get(icon);
-                    const j = await (await Jimp.read(img)).resize(64, 64);
-
-
-                    await bckg.composite(j, parseInt(boardHex.posX), parseInt(boardHex.posY) + 48, {
-                        mode: Jimp.BLEND_SOURCE_OVER,
-                        opacityDest: 1,
-                        opacitySource: 0.6
-                    });
-                }
+            if (hex.unit && renderLayers.includes("unit")) {
+                await renderer.unit(hex.unit, row, col);
             }
         }
-        log.debug("rendering text");
-        for (const label of scenario.board.labels) {
-            const boardHex = board.get(label.row, label.col);
-            const nx = parseInt(boardHex.posX);
-            const ny = parseInt(boardHex.posY);
-
-            await bckg.print(font, nx, ny - 30, {
-                text: label.text.join(" "),
-                alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
-                alignmentY: Jimp.VERTICAL_ALIGN_BOTTOM,
-            }, 188, 217);
+        if (renderLayers.includes("label")) {
+            log.debug("rendering text");
+            for (const label of scenario.board.labels) {
+                renderer.label(label);
+            }
         }
+        log.info(`scenario rendered successfully in ${renderMs.end()}ms`);
 
-        bckg.write("./test.png");
+        const result = renderer.getResult();
+        if (this._conf.o) {
+            result.write(this._conf.o);
+        } else {
+            result.write("./output.png")
+        }
+        log.info(`scenario output written on disk "${this._conf.o || "./output.png"}"`);
     }
 }

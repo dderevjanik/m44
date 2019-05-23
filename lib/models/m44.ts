@@ -1,6 +1,46 @@
 import * as t from "io-ts";
 import { EUnitName } from "./shared";
 
+export const BoardUnit = t.strict({
+    name: EUnitName,
+    badge: t.union([t.undefined, t.string]),
+    nbr_units: t.union([t.undefined, t.string])
+});
+export type BoardUnit = t.TypeOf<typeof BoardUnit>;
+
+export const BoardTerrain = t.strict({
+    name: t.string,
+    orientation: t.union([t.undefined, t.number])
+});
+export type BoardTerrain = t.TypeOf<typeof BoardTerrain>;
+
+export const BoardObstacle = t.strict({
+    name: t.string,
+    orientation: t.union([
+        t.undefined,
+        t.number
+    ])
+});
+export type BoardObstacle = t.TypeOf<typeof BoardObstacle>;
+
+export const BoardRectTerrain = t.strict({
+    name: t.string,
+    orientation: t.union([t.undefined, t.number])
+});
+export type BoardRectTerrain = t.TypeOf<typeof BoardRectTerrain>;
+
+export const BoardTag = t.strict({
+    name: t.string
+});
+export type BoardTag = t.TypeOf<typeof BoardTag>;
+
+export const BoardLabel = t.strict({
+    row: t.number,
+    col: t.number,
+    text: t.array(t.string)
+});
+export type BoardLabel = t.TypeOf<typeof BoardLabel>;
+
 export const Board = t.strict({
     type: t.string,
     face: t.string,
@@ -9,48 +49,26 @@ export const Board = t.strict({
         col: t.number,
         obstacle: t.union([
             t.undefined,
-            t.strict({
-                name: t.string,
-                orientation: t.union([
-                    t.undefined,
-                    t.number
-                ])
-            })
+            BoardObstacle
         ]),
         unit: t.union([
             t.undefined,
-            t.strict({
-                name: EUnitName,
-                badge: t.union([t.undefined, t.string]),
-                nbr_units: t.union([t.undefined, t.string])
-            })
+            BoardUnit
         ]),
         rect_terrain: t.union([
             t.undefined,
-            t.strict({
-                name: t.string,
-                orientation: t.union([t.undefined, t.number])
-            })
+            BoardRectTerrain,
         ]),
         terrain: t.union([
             t.undefined,
-            t.strict({
-                name: t.string,
-                orientation: t.union([t.undefined, t.number])
-            })
+            BoardTerrain
         ]),
         tags: t.union([
             t.undefined,
-            t.array(t.strict({
-                name: t.string
-            }))
+            t.array(BoardTag)
         ]),
     })),
-    labels: t.array(t.strict({
-        row: t.number,
-        col: t.number,
-        text: t.array(t.string)
-    }))
+    labels: t.array(BoardLabel)
 });
 
 export type Board = t.TypeOf<typeof Board>;

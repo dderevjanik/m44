@@ -15,7 +15,7 @@ export const config = {
         imageDir: "./temp"
     },
     board: {
-        hex_size: [188, 217],
+        hex_size: [188, 217] as [number, number],
         unitTL: [44, 80],
         tag_offset: [39, -42],
         badge_size: [64, 64],
@@ -41,4 +41,9 @@ export const config = {
             "text"
         ]
     }
+};
+
+export type Config = (typeof config) & {
+    o?: string;
+    l?: string;
 };
