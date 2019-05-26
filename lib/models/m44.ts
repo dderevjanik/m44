@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { EUnitName } from "./shared";
+import { EUnitName, EBoardFace } from "./shared";
 
 export const BoardUnit = t.strict({
     name: EUnitName,
@@ -43,7 +43,7 @@ export type BoardLabel = t.TypeOf<typeof BoardLabel>;
 
 export const Board = t.strict({
     type: t.string,
-    face: t.string,
+    face: EBoardFace,
     hexagons: t.array(t.strict({
         row: t.number,
         col: t.number,

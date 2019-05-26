@@ -54,7 +54,7 @@ export class App {
         log.info(`Scenario loaded and decoded successfully in ${measure.end()}ms`);
     }
 
-    async drawScenario() {
+    async drawScenario(outputPath: string) {
         const { _conf } = this;
 
         log.debug("drawing scenario");
@@ -119,12 +119,33 @@ export class App {
         await renderer.loadFont(Jimp.FONT_SANS_32_BLACK);
 
         const fillMs = new Measure();
-        await renderer.fillBck("../data/snow.png");
+        switch(scenario.board.face) {
+            case "BEACH": {
+                await renderer.fillBck("../data/countryside.png");
+                break;
+            }
+            case "COUNTRY": {
+                await renderer.fillBck("../data/countryside.png");
+                break;
+            }
+            case "DESERT": {
+                await renderer.fillBck("../data/sand.png");
+                break;
+            }
+            case "WINTER": {
+                await renderer.fillBck("../data/snow.png");
+                break;
+            }
+            default: {
+                throw new Error(`Undefined board face "${scenario.board.face}"`);
+            }
+        }
+        await renderer.fillBck("../data/outline.png");
         log.info(`Background tiles rendered in ${fillMs.end()}ms`);
 
         const renderLayers: string[] = _conf.l
             ? _conf.l.split(",")
-            : ["terrain", "rect_terrain", "obstacle", "tags", "unit", "label"];
+            : ["terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge"];
 
         const renderMs = new Measure();
         for (const hex of scenario.board.hexagons) {
@@ -147,21 +168,19 @@ export class App {
             if (hex.unit && renderLayers.includes("unit")) {
                 await renderer.unit(hex.unit, row, col);
             }
+            if (hex.unit && hex.unit.badge && renderLayers.includes("badge")) {
+                await renderer.badge(hex.unit.badge, row, col);
+            }
         }
         if (renderLayers.includes("label")) {
-            log.debug("rendering text");
             for (const label of scenario.board.labels) {
-                renderer.label(label);
+                await renderer.label(label);
             }
         }
         log.info(`scenario rendered successfully in ${renderMs.end()}ms`);
 
         const result = renderer.getResult();
-        if (this._conf.o) {
-            result.write(this._conf.o);
-        } else {
-            result.write("./output.png")
-        }
-        log.info(`scenario output written on disk "${this._conf.o || "./output.png"}"`);
+        result.write(`${outputPath}.png`);
+        log.info(`scenario output written on disk "${outputPath}.png"`);
     }
 }

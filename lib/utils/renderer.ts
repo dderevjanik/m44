@@ -9,11 +9,6 @@ export interface RendererConfig {
     hexSize: [number, number];
 }
 
-export type RenderType = "terrain"
-    | "rect_terrain"
-    | "tag"
-    | "unit"
-
 export class Renderer {
 
     private _iconRepo: InstanceType<typeof IconRepo>;
@@ -128,18 +123,19 @@ export class Renderer {
             opacityDest: 1,
             opacitySource: 0.6
         });
+    }
 
-        if (unit.badge) {
-            const jimp = await _iconRepo.get(unit.badge);
-            const jimpR = await jimp.resize(64, 64);
+    async badge(badge: string, row: number, col: number) {
+        const { _iconRepo, _board, _ctx } = this;
 
-
-            await _ctx.composite(jimpR, parseInt(boardHex.posX), parseInt(boardHex.posY) + 48, {
-                mode: Jimp.BLEND_SOURCE_OVER,
-                opacityDest: 1,
-                opacitySource: 0.6
-            });
-        }
+        const boardHex = _board.get(row, col);
+        const jimp = (await _iconRepo.get(badge))
+            .resize(64, 64);
+        await _ctx.composite(
+            jimp,
+            parseInt(boardHex.posX),
+            parseInt(boardHex.posY) + 48
+        );
     }
 
     async label(label: BoardLabel) {

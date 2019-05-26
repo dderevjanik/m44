@@ -168,6 +168,13 @@ export const EOffset = t.union([
     t.literal("C"),
 ])
 
+export const EBoardFace = t.union([
+    t.literal("WINTER"),
+    t.literal("BEACH"),
+    t.literal("COUNTRY"),
+    t.literal("DESERT")
+]);
+
 export const EPack = t.union([
     t.literal("winterwars"),
     t.literal("base"),

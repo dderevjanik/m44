@@ -44,6 +44,7 @@ export const config = {
 };
 
 export type Config = (typeof config) & {
+    _: string[];
     o?: string;
     l?: string;
 };
