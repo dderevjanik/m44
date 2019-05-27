@@ -47,6 +47,7 @@ export type Config = (typeof config) & {
     _: string[];
     help?: boolean;
     h?: boolean;
+    d?: string;
     o?: string; // output path
     output?: string;
     l?: string; // layers

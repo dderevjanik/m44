@@ -8,8 +8,6 @@ import { ImageRepo } from "./repo/image-repo";
 log4js.configure(config.log4js);
 const log = log4js.getLogger("APP");
 
-const sedDataPath = "../data/sed_data.json";
-
 const conf = nconf
     .argv()
     .defaults(config)
@@ -19,10 +17,12 @@ if (conf.h || conf.help) {
     process.stdout.write("Usage: m44 [OPTION]... FILE...\n");
     process.stdout.write("Render .m44 FILE to .png\n");
     process.stdout.write("By default, rendered file will be written alongside with input FILE, unless -o (output) is specified\n");
+    process.stdout.write("Also, make sure that sed_data.json is in folder alongside with .m44 file, otherwise define path for it using -d arg");
     process.stdout.write("\n");
     process.stdout.write("Mandatory arguments to long options are mandatory for short options too\n");
+    process.stdout.write("\t-d\t\t\t path to sed_data.json\n");
     process.stdout.write("\t-o\t\t\t set output path for rendered .png file\n");
-    process.stdout.write("\t-l, --layers\t\t render only specific layer(s_\n");
+    process.stdout.write("\t-l, --layers\t\t render only specific layers\n");
     process.stdout.write("\t\t\t\tterrain, rect_terrain, obstacle, tags, unit, label, badge\n");
     process.exit();
 }
@@ -43,8 +43,7 @@ function getFileName(filePath: string) {
 
     const inputPath = conf._[0];
     const outputFile = conf.o || getFileName(inputPath);
-
-
+    const sedDataPath = conf.d || path.join(path.dirname(inputPath), "/", "sed_data.json");
 
     const app = new App(imgRepo, conf);
     app.loadSedData(sedDataPath);
