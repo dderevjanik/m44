@@ -13,13 +13,6 @@ import { Renderer } from "./utils/renderer";
 
 const log = log4js.getLogger("APP");
 
-type RenderLayers = "terrain"
-    | "rect_terrain"
-    | "obstacle"
-    | "tags"
-    | "unit"
-    | "label";
-
 export interface AppConf extends Config {
 
 }

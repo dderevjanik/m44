@@ -1,6 +1,6 @@
 import Jimp from "jimp";
 import { IconRepo } from "./icon-repo";
-import { M44, BoardLabel, BoardObstacle, BoardRectTerrain, BoardTerrain, BoardTag, BoardUnit  } from "../models/m44";
+import { BoardLabel, BoardObstacle, BoardRectTerrain, BoardTerrain, BoardTag, BoardUnit  } from "../models/m44";
 import { Board } from "../models/board";
 
 export interface RendererConfig {

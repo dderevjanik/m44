@@ -45,6 +45,9 @@ export const config = {
 
 export type Config = (typeof config) & {
     _: string[];
-    o?: string;
-    l?: string;
+    help?: boolean;
+    h?: boolean;
+    o?: string; // output path
+    output?: string;
+    l?: string; // layers
 };
