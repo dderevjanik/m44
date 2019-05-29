@@ -23,7 +23,7 @@ if (conf.h || conf.help) {
     process.stdout.write("\t-d\t\t\t path to sed_data.json\n");
     process.stdout.write("\t-o\t\t\t set output path for rendered .png file\n");
     process.stdout.write("\t-l, --layers\t\t render only specific layers\n");
-    process.stdout.write("\t\t\t\tterrain, rect_terrain, obstacle, tags, unit, label, badge\n");
+    process.stdout.write("\t\t\t\tterrain, rect_terrain, obstacle, tags, unit, label, badge, lines\n");
     process.exit();
 }
 
@@ -39,14 +39,15 @@ function getFileName(filePath: string) {
 }
 
 (async function () {
-    const imgRepo = new ImageRepo(conf.imageRepo);
 
     const inputPath = conf._[0];
-    const outputFile = conf.o || getFileName(inputPath);
+    const outputPath = conf.o || getFileName(inputPath);
     const sedDataPath = conf.d || path.join(path.dirname(inputPath), "/", "sed_data.json");
 
+    const imgRepo = new ImageRepo(conf.imageRepo);
     const app = new App(imgRepo, conf);
     app.loadSedData(sedDataPath);
     app.loadScenario(inputPath);
-    await app.drawScenario(outputFile!);
+
+    await app.drawScenario(outputPath!);
 })();

@@ -1,4 +1,6 @@
-export class Measure {
+import { Measure } from "../types/measure";
+
+export class NodeMeasure implements Measure {
 
     _startTime: [number, number];
     _endTime: [number, number];

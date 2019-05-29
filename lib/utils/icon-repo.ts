@@ -10,7 +10,7 @@ export class IconRepo {
 
     _imageRepo: ImageRepo;
     _iconDict: IconDict;
-    _memCache: { [name: string]: Jimp };
+    _memCache: { [name: string]: Buffer };
 
     constructor(imageRepo: InstanceType<typeof ImageRepo>, iconDict: InstanceType<typeof IconDict>) {
         this._imageRepo = imageRepo;
@@ -18,20 +18,22 @@ export class IconRepo {
         this._memCache = { };
     }
 
-    async get(name: string): Promise<Jimp> {
+    async get(name: string): Promise<Buffer> {
         if (name in this._memCache) {
             return this._memCache[name];
         } else {
             const url = this._iconDict.get(name);
             const img = await this._imageRepo.get(url);
-            const jimp = await Jimp.read(img);
 
-            this._memCache[name] = jimp;
-            return jimp;
+            this._memCache[name] = img;
+            return img;
         }
     }
 
-    async getRotated(name: string, orientation: number): Promise<Jimp> {
+    async getRotated(name: string, orientation?: number): Promise<Buffer> {
+        if (!orientation) {
+            return this.get(name);
+        }
         const rotatedName = name + "_" + orientation;
         if (rotatedName in this._memCache) {
             return this._memCache[rotatedName];
@@ -47,10 +49,9 @@ export class IconRepo {
             }
             const url = this._iconDict.get(rotatedName);
             const img = await this._imageRepo.get(url);
-            const jimp = await Jimp.read(img);
 
-            this._memCache[rotatedName] = jimp;
-            return jimp;
+            this._memCache[rotatedName] = img;
+            return img;
         }
     }
 

@@ -1,13 +1,15 @@
-import { SedData, BoardSize } from "./sed_data";
+import { SedData, BoardSize, Hexagon } from "./sed_data";
 
 type BoardSettings = SedData["editor"]["board_settings"];
-type Hexagon = BoardSize["hexagons"]["item"][0];
 
 export interface BoardConf {
     boardSize: BoardSize;
     boardFace: BoardSettings["board_face"];
 }
 
+/**
+ * Used to determine x, y position in board of hexagons
+ */
 export class Board {
 
     _conf: BoardConf;
@@ -36,7 +38,16 @@ export class Board {
         });
     }
 
-    get(row: number, col: number) {
+    rows(): number {
+        return parseInt(this._conf.boardSize.nbrRows);
+    }
+
+    cols(): number {
+        return parseInt(this._conf.boardSize.nbrCols);
+    }
+
+    /** Get position of hexagon in board */
+    get(row: number, col: number): Hexagon {
         if (row in this._board && col in this._board[row]) {
             return this._board[row][col];
         } else {
@@ -44,6 +55,18 @@ export class Board {
         }
     }
 
+    /** Check if hexagon exists in board */
+    exists(row: number, col: number): boolean {
+        if (row in this._board && col in this._board[row]) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Iterate over all hexagons in board
+     * @desc Used to fill board background with background tilesets
+     */
     *all(): IterableIterator<Hexagon> {
         for (const [row, cols] of Object.entries(this._board)) {
             for (const [col, hex] of Object.entries(cols)) {

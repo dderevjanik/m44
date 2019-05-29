@@ -1,5 +1,6 @@
 import log4js, { Logger } from "log4js";
 import Jimp from "jimp";
+import fs, { readFileSync, readFile } from "fs";
 import { SedData } from "./models/sed_data";
 import { M44 } from "./models/m44";
 import { ImageRepo } from "./repo/image-repo";
@@ -8,8 +9,10 @@ import { config, Config } from "./config";
 import { fileLoader } from "./utils/file-loader";
 import { IconRepo } from "./utils/icon-repo";
 import { IconDict } from "./utils/icon-dict";
-import { Measure } from "./utils/measure";
-import { Renderer } from "./utils/renderer";
+import { NodeMeasure } from "./modules/node-measure";
+
+import { JimpRender } from "./modules/jimp-render";
+import { NodeCanvasRender } from "./modules/node-canvas-render";
 
 const log = log4js.getLogger("APP");
 
@@ -34,14 +37,14 @@ export class App {
     }
 
     loadSedData(filePath: string) {
-        const measure = new Measure();
+        const measure = new NodeMeasure();
         const sedData = fileLoader(filePath, SedData);
         this._sedData = sedData;
         log.info(`SedData loaded and decoded successfully in ${measure.end()}ms`);
     }
 
     loadScenario(filePath: string) {
-        const measure = new Measure();
+        const measure = new NodeMeasure();
         const scenario = fileLoader(filePath, M44);
         this._scenario = scenario;
         log.info(`Scenario loaded and decoded successfully in ${measure.end()}ms`);
@@ -104,76 +107,113 @@ export class App {
 
         const iconRepo = new IconRepo(this._imageRepo, iconDict);
 
-        const renderer = new Renderer(iconRepo, board, {
-            width: size[0],
-            height: size[1],
-            hexSize: config.board.hex_size
-        });
+        // const renderer = new JimpRender();
+        const renderer = new NodeCanvasRender();
         await renderer.loadFont(Jimp.FONT_SANS_32_BLACK);
+        await renderer.resize(size[0], size[1]);
 
-        const fillMs = new Measure();
+        async function fillBck(img: Buffer) {
+            for (const hexagon of board.all()) {
+                await renderer.renderImage(
+                    img,
+                    parseFloat(hexagon.posX),
+                    parseFloat(hexagon.posY)
+                );
+            }
+        }
+
+        const fillMs = new NodeMeasure();
         switch(scenario.board.face) {
             case "BEACH": {
-                await renderer.fillBck("../data/countryside.png");
+                const img = readFileSync("../data/beach.png");
+                await fillBck(img);
                 break;
             }
             case "COUNTRY": {
-                await renderer.fillBck("../data/countryside.png");
+                const img = readFileSync("../data/countryside.png");
+                await fillBck(img);
                 break;
             }
             case "DESERT": {
-                await renderer.fillBck("../data/sand.png");
+                const img = readFileSync("../data/sand.png");
+                await fillBck(img);
                 break;
             }
             case "WINTER": {
-                await renderer.fillBck("../data/snow.png");
+                const img = readFileSync("../data/snow.png");
+                await fillBck(img);
                 break;
             }
             default: {
                 throw new Error(`Undefined board face "${scenario.board.face}"`);
             }
         }
-        await renderer.fillBck("../data/outline.png");
+        const outlineImg = readFileSync("../data/outline.png");
+        await fillBck(outlineImg);
         log.info(`Background tiles rendered in ${fillMs.end()}ms`);
 
         const renderLayers: string[] = _conf.l
             ? _conf.l.split(",")
-            : ["terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge"];
+            : ["terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge", "lines"];
 
-        const renderMs = new Measure();
+        if (renderLayers.includes("lines")) {
+            renderer.renderDashedLine(250, 0, 250, 900, {
+                length: 10,
+                step: 10,
+                width: 5,
+                style: "rgba(246, 36, 89, 0.8)"
+            });
+        }
+
+        const renderMs = new NodeMeasure();
         for (const hex of scenario.board.hexagons) {
             const { row, col } = hex;
+            const { posX, posY } = board.get(row, col);
+            const x = parseFloat(posX); const y = parseFloat(posY);
 
             if (hex.terrain && renderLayers.includes("terrain")) {
-                await renderer.terrain(hex.terrain, row, col);
+                const img = await iconRepo.getRotated(hex.terrain.name, hex.terrain.orientation);
+                await renderer.renderImage(img, x, y);
             }
             if (hex.rect_terrain && renderLayers.includes("rect_terrain")) {
-                await renderer.rectTerrain(hex.rect_terrain, row, col);
+                const img = await iconRepo.getRotated(hex.rect_terrain.name, hex.rect_terrain.orientation);
+                await renderer.renderImage(img, x, y);
             }
             if (hex.obstacle && renderLayers.includes("obstacle")) {
-                await renderer.obstacle(hex.obstacle, row, col);
+                const img = await iconRepo.getRotated(hex.obstacle.name, hex.obstacle.orientation);
+                await renderer.renderImage(img, x, y);
             }
             if (hex.tags && renderLayers.includes("tags")) {
                 for (const tag of hex.tags) {
-                    await renderer.tags(tag, row, col);
+                    const img = await iconRepo.get(tag.name);
+                    await renderer.renderImage(img, x, y);
                 }
             }
             if (hex.unit && renderLayers.includes("unit")) {
-                await renderer.unit(hex.unit, row, col);
+                const img = await iconRepo.get(hex.unit.name);
+                await renderer.renderImage(img, x, y);
             }
             if (hex.unit && hex.unit.badge && renderLayers.includes("badge")) {
-                await renderer.badge(hex.unit.badge, row, col);
+                const img = await iconRepo.get(hex.unit.badge);
+                await renderer.renderImage(img, x, y);
             }
         }
         if (renderLayers.includes("label")) {
             for (const label of scenario.board.labels) {
-                await renderer.label(label);
+                const hex = board.get(label.row, label.col);
+                await renderer.renderText(
+                    label.text.join("\n"),
+                    parseInt(hex.posX),
+                    parseInt(hex.posY),
+                    188,
+                    217
+                );
             }
         }
         log.info(`scenario rendered successfully in ${renderMs.end()}ms`);
 
-        const result = renderer.getResult();
-        result.write(`${outputPath}.png`);
+        const resultImg = await renderer.getResult();
+        fs.writeFileSync(`${outputPath}.png`, resultImg);
         log.info(`scenario output written on disk "${outputPath}.png"`);
     }
 }
