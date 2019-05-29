@@ -55,7 +55,9 @@ export class NodeCanvasRender implements Renderer {
         if (!this._font) {
             throw new Error("font_not_set");
         }
+        this._ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
         this._ctx.font = this._font;
+        this._ctx.textAlign = "center";
         this._ctx.fillText(text, x, y, w);
     }
 

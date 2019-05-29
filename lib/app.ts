@@ -109,7 +109,7 @@ export class App {
 
         // const renderer = new JimpRender();
         const renderer = new NodeCanvasRender();
-        await renderer.loadFont(Jimp.FONT_SANS_32_BLACK);
+        await renderer.loadFont("32px Arial");
         await renderer.resize(size[0], size[1]);
 
         async function fillBck(img: Buffer) {
