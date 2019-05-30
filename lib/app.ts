@@ -157,11 +157,24 @@ export class App {
             : ["terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge", "lines"];
 
         if (renderLayers.includes("lines")) {
-            renderer.renderDashedLine(250, 0, 250, 900, {
-                length: 10,
-                step: 10,
-                width: 5,
-                style: "rgba(246, 36, 89, 0.8)"
+            const firstHex = board.get(0, 8);
+            const secondHex = board.get(0, 18)
+
+            const l1 = parseFloat(firstHex.posX);
+            const l2 = parseFloat(secondHex.posX);
+
+            // const rightLine = board.get(0, 9);
+            await renderer.renderDashedLine(l1, 0, l1, 900, {
+                length: 12,
+                step: 3,
+                width: 3,
+                style: "rgba(178, 34, 34, 0.8)"
+            });
+            await renderer.renderDashedLine(l2, 0, l2, 900, {
+                length: 12,
+                step: 8,
+                width: 3,
+                style: "rgba(178, 34, 34, 0.8)"
             });
         }
 
