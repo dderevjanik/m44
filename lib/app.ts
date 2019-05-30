@@ -158,22 +158,26 @@ export class App {
 
         if (renderLayers.includes("lines")) {
             const firstHex = board.get(0, 8);
-            const secondHex = board.get(0, 18)
+            const secondHex = board.get(0, 18);
+            const bottomHex = board.get(8, 8);
 
-            const l1 = parseFloat(firstHex.posX);
-            const l2 = parseFloat(secondHex.posX);
+            const l1x = parseFloat(firstHex.posX);
+            const l2x = parseFloat(secondHex.posX);
+
+            const y1 = parseFloat(firstHex.posY);
+            const y2 = parseFloat(bottomHex.posY) + _conf.board.hex_size[1];
 
             // const rightLine = board.get(0, 9);
-            await renderer.renderDashedLine(l1, 0, l1, 900, {
-                length: 12,
-                step: 3,
-                width: 3,
-                style: "rgba(178, 34, 34, 0.8)"
-            });
-            await renderer.renderDashedLine(l2, 0, l2, 900, {
+            await renderer.renderDashedLine(l1x, y1, l1x, y2, {
                 length: 12,
                 step: 8,
-                width: 3,
+                width: 4,
+                style: "rgba(178, 34, 34, 0.8)"
+            });
+            await renderer.renderDashedLine(l2x, y1, l2x, y2, {
+                length: 12,
+                step: 8,
+                width: 4,
                 style: "rgba(178, 34, 34, 0.8)"
             });
         }
