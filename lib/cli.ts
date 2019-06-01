@@ -1,12 +1,13 @@
 import path from "path";
 import nconf from "nconf";
 import log4js from "log4js";
+import fs from "fs";
 import { config, Config } from "./config";
 import { App } from "./app";
 import { ImageRepo } from "./repo/image-repo";
 
 log4js.configure(config.log4js);
-const log = log4js.getLogger("APP");
+const log = log4js.getLogger("CLI");
 
 const conf = nconf
     .argv()
@@ -39,15 +40,51 @@ function getFileName(filePath: string) {
 }
 
 (async function () {
-
+    // obtain data from xargs
     const inputPath = conf._[0];
     const outputPath = conf.o || getFileName(inputPath);
     const sedDataPath = conf.d || path.join(path.dirname(inputPath), "/", "sed_data.json");
+    const renderLayers = conf.l
+        ? conf.l.split(",").map(layer => layer.trim())
+        : ["terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge", "lines"];
 
+    // validation
+    if (!inputPath) {
+        log.error("Input file not defined");
+        process.exit(1);
+    }
+
+    if (!fs.existsSync(inputPath)) {
+        log.error(`Input file "${inputPath}" doesn't exists`);
+        log.warn("please make sure that input path is correct");
+        process.exit(1);
+    }
+
+    if (!fs.existsSync(sedDataPath)) {
+        log.error("Cannot find sedData.json");
+        log.warn("please change your cwd to match sedData.json or define path to it using '-d' option");
+        process.exit(1);
+    }
+
+    if (conf.l) {
+        renderLayers.forEach((layer) => {
+            if (!conf.board.layers.includes(layer as any)) {
+                log.error(`Unknown layer "${layer}" for "-l" option`);
+                log.warn(`layer should be one of: ${conf.board.layers.join(", ")}`);
+                process.exit(1);
+            }
+        })
+    }
+
+    // initialize logic
     const imgRepo = new ImageRepo(conf.imageRepo);
-    const app = new App(imgRepo, conf);
+    const app = new App(imgRepo, {
+        renderLayers: renderLayers,
+        board: conf.board
+    });
     app.loadSedData(sedDataPath);
     app.loadScenario(inputPath);
 
+    // draw scenario
     await app.drawScenario(outputPath!);
 })();

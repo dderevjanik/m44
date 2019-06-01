@@ -1,4 +1,5 @@
 import { Configuration } from "log4js";
+import { AppConf } from "./app";
 
 export const config = {
     log4js: {
@@ -15,7 +16,7 @@ export const config = {
         imageDir: "./temp"
     },
     board: {
-        hex_size: [188, 217] as [number, number],
+        hex_size: [188, 217],
         unitTL: [44, 80],
         tag_offset: [39, -42],
         badge_size: [64, 64],
@@ -31,16 +32,17 @@ export const config = {
             overlord: [5014, 1737],
             brkthru: [2570, 3039]
         },
-        drawing_orders: [
+        layers: [
             "terrain",
             "lines",
             "rect_terrain",
             "obstacle",
             "unit",
+            "badge",
             "tags",
-            "text"
+            "label"
         ]
-    }
+    } as AppConf["board"]
 };
 
 export type Config = (typeof config) & {

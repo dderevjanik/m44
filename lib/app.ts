@@ -16,8 +16,36 @@ import { NodeCanvasRender } from "./modules/node-canvas-render";
 
 const log = log4js.getLogger("APP");
 
-export interface AppConf extends Config {
-
+export interface AppConf {
+    renderLayers: string[]
+    board: {
+        hex_size: [number, number];
+        unitTL: [number, number];
+        tag_offset: [number, number];
+        badge_size: [number, number];
+        background_color: [number, number, number],
+        border_color: [number, number, number],
+        border_width: number,
+        margin: [number, number, number, number],
+        dash_color: [number, number, number],
+        dash_length: [number, number],
+        dash_width: number,
+        board_sizes: {
+            standartd: [number, number],
+            overlord: [number, number],
+            brkthru: [number, number]
+        },
+        layers: [
+            "terrain",
+            "lines",
+            "rect_terrain",
+            "obstacle",
+            "unit",
+            "badge",
+            "tags",
+            "label"
+        ]
+    }
 }
 
 export class App {
@@ -152,11 +180,7 @@ export class App {
         await fillBck(outlineImg);
         log.info(`Background tiles rendered in ${fillMs.end()}ms`);
 
-        const renderLayers: string[] = _conf.l
-            ? _conf.l.split(",")
-            : ["terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge", "lines"];
-
-        if (renderLayers.includes("lines")) {
+        if (_conf.renderLayers.includes("lines")) {
             const firstHex = board.get(0, 8);
             const secondHex = board.get(0, 18);
             const bottomHex = board.get(8, 8);
@@ -188,34 +212,34 @@ export class App {
             const { posX, posY } = board.get(row, col);
             const x = parseFloat(posX); const y = parseFloat(posY);
 
-            if (hex.terrain && renderLayers.includes("terrain")) {
+            if (hex.terrain && _conf.renderLayers.includes("terrain")) {
                 const img = await iconRepo.getRotated(hex.terrain.name, hex.terrain.orientation);
                 await renderer.renderImage(img, x, y);
             }
-            if (hex.rect_terrain && renderLayers.includes("rect_terrain")) {
+            if (hex.rect_terrain && _conf.renderLayers.includes("rect_terrain")) {
                 const img = await iconRepo.getRotated(hex.rect_terrain.name, hex.rect_terrain.orientation);
                 await renderer.renderImage(img, x, y);
             }
-            if (hex.obstacle && renderLayers.includes("obstacle")) {
+            if (hex.obstacle && _conf.renderLayers.includes("obstacle")) {
                 const img = await iconRepo.getRotated(hex.obstacle.name, hex.obstacle.orientation);
                 await renderer.renderImage(img, x, y);
             }
-            if (hex.tags && renderLayers.includes("tags")) {
+            if (hex.tags && _conf.renderLayers.includes("tags")) {
                 for (const tag of hex.tags) {
                     const img = await iconRepo.get(tag.name);
                     await renderer.renderImage(img, x, y);
                 }
             }
-            if (hex.unit && renderLayers.includes("unit")) {
+            if (hex.unit && _conf.renderLayers.includes("unit")) {
                 const img = await iconRepo.get(hex.unit.name);
                 await renderer.renderImage(img, x, y);
             }
-            if (hex.unit && hex.unit.badge && renderLayers.includes("badge")) {
+            if (hex.unit && hex.unit.badge && _conf.renderLayers.includes("badge")) {
                 const img = await iconRepo.get(hex.unit.badge);
                 await renderer.renderImage(img, x, y);
             }
         }
-        if (renderLayers.includes("label")) {
+        if (_conf.renderLayers.includes("label")) {
             for (const label of scenario.board.labels) {
                 const hex = board.get(label.row, label.col);
                 await renderer.renderText(
