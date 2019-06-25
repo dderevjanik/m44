@@ -1,5 +1,5 @@
 import Jimp from "jimp";
-import { Renderer } from "../types/renderer";
+import { Renderer } from "../../core/types/renderer";
 
 export interface Config {
     width: number;

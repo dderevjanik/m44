@@ -1,5 +1,5 @@
 import { Configuration } from "log4js";
-import { AppConf } from "./app";
+import { AppConf } from "../core/app";
 
 export const config = {
     log4js: {
@@ -49,6 +49,7 @@ export type Config = (typeof config) & {
     _: string[];
     help?: boolean;
     h?: boolean;
+    g?: string; // glob
     d?: string;
     o?: string; // output path
     output?: string;

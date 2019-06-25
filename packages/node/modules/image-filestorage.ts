@@ -1,16 +1,28 @@
-import fs, { createWriteStream } from "fs";
+import fs, { createWriteStream, WriteStream } from "fs";
 import * as log4js from "log4js";
 import path from "path";
-import { fetchFile } from "../utils/fetch";
+import http from "http";
+import { ImageStorage } from "../../core/types/imagestorage";
 
 const log = log4js.getLogger("IMG-REPO");
+
+export function fetchFile(url: string, writeStream: WriteStream): Promise<void> {
+    return new Promise((resolve, reject) => {
+        http.get(url, response => {
+            response
+                .on("error", err => reject(err))
+                .on("close", () => resolve())
+                .pipe(writeStream)
+        })
+    });
+}
 
 interface ImageRepoConf {
     dataUrl: string;
     imageDir: string;
 }
 
-export class ImageRepo {
+export class ImageFileStorage implements ImageStorage {
 
     private _conf: ImageRepoConf;
     private _memCache: { [imageName: string]: Buffer };
@@ -25,14 +37,13 @@ export class ImageRepo {
         }
     }
 
-    async get(imageName: string) {
+    async get(imageName: string): Promise<Buffer> {
         const { imageDir } = this._conf;
         const fileName = imageName.split("/").pop();
         if (!fileName) {
             throw new Error(`Cannot parse filename from "${imageName}"`)
         }
         const filePath = path.join(imageDir, fileName);
-
         if (imageName in this._memCache) {
             return this._memCache[imageName];
         } else if (fs.existsSync(filePath)) {

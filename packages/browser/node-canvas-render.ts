@@ -1,5 +1,5 @@
 import canvas, { Image } from "canvas";
-import { Renderer } from "../types/renderer";
+import { Renderer } from "../core/types/renderer";
 
 export class NodeCanvasRender implements Renderer {
 

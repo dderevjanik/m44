@@ -1,6 +1,5 @@
-import Jimp from "jimp";
-import { ImageRepo } from "../repo/image-repo";
 import { IconDict } from "./icon-dict";
+import { ImageStorage } from "../types/imagestorage";
 
 function replaceAt(str: string, index: number, replacement: string) {
     return str.substr(0, index) + replacement + str.substr(index + replacement.length);
@@ -8,11 +7,11 @@ function replaceAt(str: string, index: number, replacement: string) {
 
 export class IconRepo {
 
-    _imageRepo: ImageRepo;
+    _imageRepo: ImageStorage;
     _iconDict: IconDict;
     _memCache: { [name: string]: Buffer };
 
-    constructor(imageRepo: InstanceType<typeof ImageRepo>, iconDict: InstanceType<typeof IconDict>) {
+    constructor(imageRepo: ImageStorage, iconDict: InstanceType<typeof IconDict>) {
         this._imageRepo = imageRepo;
         this._iconDict = iconDict;
         this._memCache = { };
