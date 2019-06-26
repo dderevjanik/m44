@@ -10,9 +10,9 @@ export function fetchFile(url: string, writeStream: WriteStream): Promise<void> 
     return new Promise((resolve, reject) => {
         http.get(url, response => {
             response
+                .pipe(writeStream)
                 .on("error", err => reject(err))
                 .on("close", () => resolve())
-                .pipe(writeStream)
         })
     });
 }

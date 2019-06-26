@@ -23,7 +23,7 @@ if (conf.h || conf.help || conf._.length === 0) {
     process.stdout.write("\t-d\t\t\t path to sed_data.json\n");
     process.stdout.write("\t-o\t\t\t set output path for rendered .png file\n");
     process.stdout.write("\t-g\t\t\t use glob patter for input files. You must also include -o output folder");
-    process.stdout.write("\t-l, --layers\t\t render only specific layers\n");
+    process.stdout.write("\t-l\t\t\t render only specific layers\n");
     process.stdout.write("\t\t\t\tterrain, rect_terrain, obstacle, tags, unit, label, badge, lines\n");
     process.exit();
 }
@@ -102,7 +102,7 @@ function getFileName(filePath: string) {
                 await m44Node.drawScenario(matchedPath, matchedOutputPath);
                 log.info(`scenario output written on disk "${matchedOutputPath}.png"`);
             } catch(err) {
-                log.error(err);
+                log.error(`Cannot draw scenario "${fileName}": ${err}`);
             }
         }
     } else {

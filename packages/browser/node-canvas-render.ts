@@ -40,8 +40,8 @@ export class NodeCanvasRender implements Renderer {
     async renderImage(img: Buffer, x: number, y: number): Promise<void> {
         const nImg = new Image();
         return new Promise((resolve, reject) => {
-            nImg.onerror = () => {
-                reject("error_during_loading_image");
+            nImg.onerror = (err) => {
+                reject(`error_during_loading_image ${err}`);
             };
             nImg.onload = () => {
                 this._ctx.drawImage(nImg, x, y);
