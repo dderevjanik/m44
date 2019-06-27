@@ -7,7 +7,7 @@ export interface Config {
     hexSize: [number, number];
 }
 
-export class JimpRender implements Renderer {
+export class JimpRender implements Renderer<Buffer, Buffer> {
 
     private _ctx: Jimp;
     private _font: any | null;

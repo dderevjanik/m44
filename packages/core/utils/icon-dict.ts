@@ -1,7 +1,3 @@
-import log4js from "log4js";
-
-const log = log4js.getLogger("ICON-DICT");
-
 export class IconDict {
 
     private _iconDict: { [name: string]: string } = {};
@@ -20,7 +16,7 @@ export class IconDict {
 
     set(name: string, icon: string): boolean {
         if (name in this._iconDict) {
-            log.debug(`"${name}" already exists`);
+            console.log(`[IMGDICT] "${name}" already exists`);
             return false;
         }
         this._iconDict[name] = icon;

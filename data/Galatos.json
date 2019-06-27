@@ -1,0 +1,432 @@
+{
+	"meta_data": {
+		"status": "PRIVATE",
+		"software": "sed 1.2"
+	},
+	"game_info": {
+		"date_begin": "1944-06-06",
+		"front": "WESTERN",
+		"type": "HISTORICAL",
+		"starting": "PLAYER1",
+		"side_player1": "AXIS",
+		"side_player2": "ALLIES",
+		"country_player1": "DE",
+		"country_player2": "US",
+		"cards_player1": 4,
+		"cards_player2": 4,
+		"victory_player1": 4,
+		"victory_player2": 4
+	},
+	"board": {
+		"type": "STANDARD",
+		"face": "COUNTRY",
+		"hexagons": [
+			{
+				"row": 0,
+				"col": 4,
+				"unit": {
+					"name": "inf2ger",
+					"badge": "badge4"
+				}
+			},
+			{
+				"row": 0,
+				"col": 6,
+				"unit": {
+					"name": "inf2ger",
+					"badge": "badge4"
+				}
+			},
+			{
+				"row": 0,
+				"col": 10,
+				"terrain": {
+					"name": "hills"
+				}
+			},
+			{
+				"row": 0,
+				"col": 14,
+				"unit": {
+					"name": "infger"
+				}
+			},
+			{
+				"row": 1,
+				"col": 7,
+				"unit": {
+					"name": "infger"
+				}
+			},
+			{
+				"row": 1,
+				"col": 9,
+				"unit": {
+					"name": "infger"
+				}
+			},
+			{
+				"row": 1,
+				"col": 11,
+				"terrain": {
+					"name": "hills"
+				}
+			},
+			{
+				"row": 1,
+				"col": 13,
+				"unit": {
+					"name": "infger"
+				}
+			},
+			{
+				"row": 1,
+				"col": 15,
+				"unit": {
+					"name": "infger"
+				}
+			},
+			{
+				"row": 1,
+				"col": 17,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 2,
+				"col": 4,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 2,
+				"col": 16,
+				"terrain": {
+					"name": "hills"
+				}
+			},
+			{
+				"row": 2,
+				"col": 20,
+				"unit": {
+					"name": "infger"
+				}
+			},
+			{
+				"row": 2,
+				"col": 22,
+				"unit": {
+					"name": "gunger"
+				}
+			},
+			{
+				"row": 3,
+				"col": 9,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 3,
+				"col": 21,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 4,
+				"col": 0,
+				"terrain": {
+					"name": "woods"
+				},
+				"unit": {
+					"name": "infru"
+				}
+			},
+			{
+				"row": 4,
+				"col": 6,
+				"terrain": {
+					"name": "hills"
+				}
+			},
+			{
+				"row": 4,
+				"col": 10,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 4,
+				"col": 14,
+				"terrain": {
+					"name": "buildings"
+				},
+				"obstacle": {
+					"name": "sand",
+					"orientation": 2
+				},
+				"unit": {
+					"name": "infru"
+				},
+				"tags": [
+					{
+						"name": "medal2"
+					}
+				]
+			},
+			{
+				"row": 4,
+				"col": 18,
+				"terrain": {
+					"name": "hills"
+				}
+			},
+			{
+				"row": 4,
+				"col": 22,
+				"unit": {
+					"name": "inf2ger",
+					"badge": "badge4"
+				}
+			},
+			{
+				"row": 4,
+				"col": 24,
+				"unit": {
+					"name": "infger"
+				}
+			},
+			{
+				"row": 5,
+				"col": 3,
+				"terrain": {
+					"name": "buildings"
+				},
+				"obstacle": {
+					"name": "sand",
+					"orientation": 2
+				},
+				"unit": {
+					"name": "infru"
+				},
+				"tags": [
+					{
+						"name": "medal2"
+					}
+				]
+			},
+			{
+				"row": 5,
+				"col": 5,
+				"terrain": {
+					"name": "hills"
+				}
+			},
+			{
+				"row": 5,
+				"col": 7,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 5,
+				"col": 15,
+				"terrain": {
+					"name": "buildings"
+				},
+				"tags": [
+					{
+						"name": "medal2"
+					},
+					{
+						"name": "medal6"
+					}
+				]
+			},
+			{
+				"row": 5,
+				"col": 21,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 6,
+				"col": 8,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 6,
+				"col": 12,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 6,
+				"col": 14,
+				"obstacle": {
+					"name": "sand",
+					"orientation": 2
+				},
+				"unit": {
+					"name": "gunru"
+				}
+			},
+			{
+				"row": 6,
+				"col": 16,
+				"terrain": {
+					"name": "hills"
+				}
+			},
+			{
+				"row": 6,
+				"col": 18,
+				"terrain": {
+					"name": "hills"
+				},
+				"obstacle": {
+					"name": "sand",
+					"orientation": 2
+				},
+				"unit": {
+					"name": "infru"
+				}
+			},
+			{
+				"row": 7,
+				"col": 7,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 7,
+				"col": 11,
+				"unit": {
+					"name": "infru"
+				}
+			},
+			{
+				"row": 7,
+				"col": 17,
+				"terrain": {
+					"name": "woods"
+				}
+			},
+			{
+				"row": 7,
+				"col": 21,
+				"terrain": {
+					"name": "hills"
+				},
+				"obstacle": {
+					"name": "sand",
+					"orientation": 2
+				},
+				"unit": {
+					"name": "infru"
+				}
+			},
+			{
+				"row": 8,
+				"col": 12,
+				"unit": {
+					"name": "tankru"
+				}
+			},
+			{
+				"row": 8,
+				"col": 14,
+				"unit": {
+					"name": "infru"
+				}
+			},
+			{
+				"row": 8,
+				"col": 22,
+				"terrain": {
+					"name": "buildings"
+				},
+				"tags": [
+					{
+						"name": "medal2"
+					}
+				]
+			}
+		],
+		"labels": [
+			{
+				"row": 2,
+				"col": 16,
+				"text": [
+					"Pink"
+				]
+			},
+			{
+				"row": 4,
+				"col": 14,
+				"text": [
+					"Galatos"
+				]
+			},
+			{
+				"row": 4,
+				"col": 18,
+				"text": [
+					"Ruin Hill"
+				]
+			},
+			{
+				"row": 5,
+				"col": 3,
+				"text": [
+					"Daratsos"
+				]
+			},
+			{
+				"row": 6,
+				"col": 18,
+				"text": [
+					"Wheat Hill"
+				]
+			},
+			{
+				"row": 7,
+				"col": 21,
+				"text": [
+					"Red Hil"
+				]
+			},
+			{
+				"row": 8,
+				"col": 22,
+				"text": [
+					"Stalos"
+				]
+			}
+		]
+	},
+	"packs": {
+		"base": 1,
+		"eastern": 1
+	},
+	"text": {
+		"en": {
+			"name": "My title",
+			"subtitle": "\t\t\t",
+			"description": "My description",
+			"rules": "My rules",
+			"historical": "My historical background",
+			"victory": "My victory conditions"
+		}
+	}
+}

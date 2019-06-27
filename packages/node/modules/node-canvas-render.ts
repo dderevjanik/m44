@@ -1,7 +1,7 @@
 import canvas, { Image } from "canvas";
-import { Renderer } from "../core/types/renderer";
+import { Renderer } from "../../core/types/renderer";
 
-export class NodeCanvasRender implements Renderer {
+export class NodeCanvasRender implements Renderer<Buffer, Buffer> {
 
     private _canvas: canvas.Canvas;
     private _ctx: canvas.CanvasRenderingContext2D;

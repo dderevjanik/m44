@@ -1,4 +1,4 @@
-import { Measure } from "../core/types/measure";
+import { Measure } from "../../core/types/measure";
 
 export class BrowserMeasure implements Measure {
 

@@ -1,11 +1,11 @@
 import * as fs from "fs";
 import { App, AppConf } from "../core/app";
 import { fileLoader } from "./utils/file-loader";
-import { SedData } from "../core/models/sed_data";
+import { SedData } from "../types/sed_data";
 import { NodeMeasure } from "./modules/node-measure";
-import { NodeCanvasRender } from "../browser/node-canvas-render";
+import { NodeCanvasRender } from "./modules/node-canvas-render";
 import { ImageFileStorage } from "./modules/image-filestorage";
-import { M44 } from "../core/models/m44";
+import { M44 } from "../types/m44";
 
 interface Config {
     renderLayers: string[];
@@ -17,7 +17,7 @@ interface Config {
 export class M44Node {
 
     _conf: Config;
-    _app: App | null = null;
+    _app: App<Buffer, Buffer> | null = null;
 
     constructor(conf: Config) {
         this._conf = conf;
@@ -25,7 +25,7 @@ export class M44Node {
 
     async initialize(sedDataPath: string): Promise<void> {
         const sedData = fileLoader(sedDataPath, SedData);
-        this._app = new App(
+        this._app = new App<Buffer, Buffer>(
             sedData,
             new NodeMeasure(),
             new NodeCanvasRender(),

@@ -1,3 +1,3 @@
-export interface ImageStorage {
-    get(imageName: string): Promise<Buffer>;
+export interface ImageStorage<IMG> {
+    get(imageName: string): Promise<IMG>;
 }

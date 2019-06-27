@@ -5,19 +5,19 @@ function replaceAt(str: string, index: number, replacement: string) {
     return str.substr(0, index) + replacement + str.substr(index + replacement.length);
 }
 
-export class IconRepo {
+export class IconRepo<IMG> {
 
-    _imageRepo: ImageStorage;
+    _imageRepo: ImageStorage<IMG>;
     _iconDict: IconDict;
-    _memCache: { [name: string]: Buffer };
+    _memCache: { [name: string]: IMG };
 
-    constructor(imageRepo: ImageStorage, iconDict: InstanceType<typeof IconDict>) {
+    constructor(imageRepo: ImageStorage<IMG>, iconDict: InstanceType<typeof IconDict>) {
         this._imageRepo = imageRepo;
         this._iconDict = iconDict;
         this._memCache = { };
     }
 
-    async get(name: string): Promise<Buffer> {
+    async get(name: string): Promise<IMG> {
         if (name in this._memCache) {
             return this._memCache[name];
         } else {
@@ -29,7 +29,7 @@ export class IconRepo {
         }
     }
 
-    async getRotated(name: string, orientation?: number): Promise<Buffer> {
+    async getRotated(name: string, orientation?: number): Promise<IMG> {
         if (!orientation) {
             return this.get(name);
         }

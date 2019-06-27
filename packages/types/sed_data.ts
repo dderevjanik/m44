@@ -15,7 +15,7 @@ import {
     EArmy,
     EOffset,
     Side
-} from "../../types/shared";
+} from "./shared";
 
 export const Hexagon = t.strict({
     col: t.string, // number

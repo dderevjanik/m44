@@ -1,14 +1,11 @@
-import log4js from "log4js";
 import { ImageStorage } from "./types/imagestorage";
 import { SedData } from "./models/sed_data";
-import { M44 } from "./models/m44";
-import { Board } from "./models/board";
+import { M44 } from "../types/m44";
+import { Board } from "../types/board";
 import { IconRepo } from "./utils/icon-repo";
 import { IconDict } from "./utils/icon-dict";
 import { Measure } from "./types/measure";
 import { Renderer } from "./types/renderer";
-
-const log = log4js.getLogger("APP");
 
 export interface AppConf {
     renderLayers: string[]
@@ -42,19 +39,19 @@ export interface AppConf {
     }
 }
 
-export class App {
+export class App<IMG, RES> {
 
-    _imageRepo: ImageStorage;
+    _imageRepo: ImageStorage<IMG>;
     _sedData: SedData | null;
     _measure: Measure;
-    _renderer: Renderer;
+    _renderer: Renderer<IMG, RES>;
     _conf: AppConf;
 
     constructor(
         sedData: SedData,
         measure: Measure,
-        renderer: Renderer,
-        imageRepo: ImageStorage,
+        renderer: Renderer<IMG, RES>,
+        imageRepo: ImageStorage<IMG>,
         conf: AppConf
     ) {
         this._sedData = sedData;
@@ -64,12 +61,12 @@ export class App {
         this._conf = conf;
     }
 
-    async drawScenario(scenario: M44): Promise<Buffer> {
-        log.debug("drawing scenario");
+    async drawScenario(scenario: M44): Promise<RES> {
+        console.log("[APP] drawing scenario");
         const sedData = this._sedData;
 
         if (sedData === null || scenario === null) {
-            log.error("Please intialize both sedData and scenario before drawScenario()");
+            console.error("[APP] Please intialize both sedData and scenario before drawScenario()");
             throw new Error("data_or_scenario_not_initialized");
         }
 
@@ -82,38 +79,38 @@ export class App {
 
         const size = this._conf.board.board_sizes.standartd;
 
-        log.debug("creating dictionary of all icons with their names");
+        console.log("[APP] creating dictionary of all icons with their names");
         const iconDict = new IconDict();
 
-        log.debug("creating terrain dictionary");
+        console.log("[APP] creating terrain dictionary");
         for (const category of sedData.editor.terrain.item) {
             for (const terrain of category.list.item) {
                 iconDict.set(terrain.name, terrain.icon);
             }
         }
 
-        log.debug("creating unit dictionary");
+        console.log("[APP] creating unit dictionary");
         for (const category of sedData.editor.unit.item) {
             for (const unit of category.list.item) {
                 iconDict.set(unit.name, unit.icon);
             }
         }
 
-        log.debug("creating obstacle dictionary");
+        console.log("[APP] creating obstacle dictionary");
         for (const category of sedData.editor.obstacle.item) {
             for (const obstacle of category.list.item) {
                 iconDict.set(obstacle.name, obstacle.icon);
             }
         }
 
-        log.debug("creating marker dictionary");
+        console.log("[APP] creating marker dictionary");
         for (const category of sedData.editor.marker.item) {
             for (const marker of category.list.item) {
                 iconDict.set(marker.name, marker.icon);
             }
         }
 
-        log.debug("creating badge dictionary");
+        console.log("[APP] creating badge dictionary");
         for (const badge of sedData.editor.badges.item) {
             iconDict.set(badge.name, badge.icon);
         }
@@ -126,7 +123,7 @@ export class App {
         await renderer.loadFont("32px Arial");
         await renderer.resize(size[0], size[1]);
 
-        async function fillBck(img: Buffer) {
+        async function fillBck(img: IMG) {
             for (const hexagon of board.all()) {
                 await renderer.renderImage(
                     img,
@@ -166,7 +163,7 @@ export class App {
         }
         const outlineImg = await this._imageRepo.get("outline.png");
         await fillBck(outlineImg);
-        log.info(`Background tiles rendered in ${this._measure.end()}ms`);
+        console.log(`[APP] Background tiles rendered in ${this._measure.end()}ms`);
 
         if (this._conf.renderLayers.includes("lines")) {
             const firstHex = board.get(0, 8);
@@ -241,7 +238,7 @@ export class App {
                 );
             }
         }
-        log.info(`scenario rendered successfully in ${this._measure.end()}ms`);
+        console.log(`[APP] scenario rendered successfully in ${this._measure.end()}ms`);
 
         // Finish
 

@@ -22,7 +22,7 @@ interface ImageRepoConf {
     imageDir: string;
 }
 
-export class ImageFileStorage implements ImageStorage {
+export class ImageFileStorage implements ImageStorage<Buffer> {
 
     private _conf: ImageRepoConf;
     private _memCache: { [imageName: string]: Buffer };
@@ -32,7 +32,7 @@ export class ImageFileStorage implements ImageStorage {
         this._memCache = {};
 
         if (!fs.existsSync(conf.imageDir)) {
-            log.debug(`imageDir doens't exists, creating "${conf.imageDir}"`);
+            log.debug(`imageDir doesn't exists, creating "${conf.imageDir}"`);
             fs.mkdirSync(conf.imageDir);
         }
     }

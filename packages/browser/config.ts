@@ -1,19 +1,9 @@
-import * as log4js from "log4js";
 import { AppConf } from "../core/app";
 
 export const config = {
-    log4js: {
-        appenders: {
-            out: { type: "stdout" },
-            app: { type: "file", filename: "application.log" }
-        },
-        categories: {
-            default: { appenders: ["out", "app"], level: "debug" }
-        }
-    } as log4js.Configuration,
     imageRepo: {
         dataUrl: "http://static.daysofwonder.com/memoir44/sed_images/",
-        imageDir: "./temp"
+        imageDir: "m44-images"
     },
     board: {
         hex_size: [188, 217],
@@ -43,15 +33,4 @@ export const config = {
             "label"
         ]
     } as AppConf["board"]
-};
-
-export type Config = (typeof config) & {
-    _: string[];
-    help?: boolean;
-    h?: boolean;
-    g?: string; // glob
-    d?: string;
-    o?: string; // output path
-    output?: string;
-    l?: string; // layers
 };
