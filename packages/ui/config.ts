@@ -23,6 +23,7 @@ export const config = {
             brkthru: [2570, 3039]
         },
         layers: [
+            "background",
             "terrain",
             "lines",
             "rect_terrain",

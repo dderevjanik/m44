@@ -29,7 +29,9 @@
   },
   "scripts": {
     "prod": "webpack --config=./packages/browser/webpack.prod.js",
-    "dev": "webpack --config=./packages/browser/webpack.dev.js --watch",
+    "dev": "webpack --config=./packages/browser/webpack.dev.js",
+    "prod-ui": "webpack --config=./packages/ui/webpack.prod.js",
+    "dev-ui": "webpack --config=./packages/ui/webpack.dev.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

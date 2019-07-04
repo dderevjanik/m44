@@ -24,7 +24,7 @@ if (conf.h || conf.help || conf._.length === 0) {
     process.stdout.write("\t-o\t\t\t set output path for rendered .png file\n");
     process.stdout.write("\t-g\t\t\t use glob patter for input files. You must also include -o output folder");
     process.stdout.write("\t-l\t\t\t render only specific layers\n");
-    process.stdout.write("\t\t\t\tterrain, rect_terrain, obstacle, tags, unit, label, badge, lines\n");
+    process.stdout.write("\t\t\t\tbackground,terrain,rect_terrain,obstacle,tags,unit,label,badge,lines\n");
     process.exit();
 }
 
@@ -40,7 +40,7 @@ function getFileName(filePath: string) {
     const sedDataPath = conf.d || path.join(path.dirname(inputPath), "/", "sed_data.json");
     const renderLayers = conf.l
         ? conf.l.split(",").map(layer => layer.trim())
-        : ["terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge", "lines"];
+        : ["background", "terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge", "lines"];
 
     // validation
     if (!inputPath) {

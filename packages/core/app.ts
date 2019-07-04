@@ -1,5 +1,5 @@
 import { ImageStorage } from "./types/imagestorage";
-import { SedData } from "./models/sed_data";
+import { SedData } from "../types/sed_data";
 import { M44 } from "../types/m44";
 import { Board } from "../types/board";
 import { IconRepo } from "./utils/icon-repo";
@@ -27,6 +27,7 @@ export interface AppConf {
             brkthru: [number, number]
         },
         layers: [
+            "background",
             "terrain",
             "lines",
             "rect_terrain",
@@ -135,35 +136,37 @@ export class App<IMG, RES> {
 
         // Pre-fill background
 
-        this._measure.start();
-        switch(scenario.board.face) {
-            case "BEACH": {
-                const img = await this._imageRepo.get("beach.png");
-                await fillBck(img);
-                break;
+        if (this._conf.renderLayers.includes("background")) {
+            this._measure.start();
+            switch(scenario.board.face) {
+                case "BEACH": {
+                    const img = await this._imageRepo.get("beach.png");
+                    await fillBck(img);
+                    break;
+                }
+                case "COUNTRY": {
+                    const img = await this._imageRepo.get("countryside.png");
+                    await fillBck(img);
+                    break;
+                }
+                case "DESERT": {
+                    const img = await this._imageRepo.get("sand.png");
+                    await fillBck(img);
+                    break;
+                }
+                case "WINTER": {
+                    const img = await this._imageRepo.get("snow.png");
+                    await fillBck(img);
+                    break;
+                }
+                default: {
+                    throw new Error(`Undefined board face "${scenario.board.face}"`);
+                }
             }
-            case "COUNTRY": {
-                const img = await this._imageRepo.get("countryside.png");
-                await fillBck(img);
-                break;
-            }
-            case "DESERT": {
-                const img = await this._imageRepo.get("sand.png");
-                await fillBck(img);
-                break;
-            }
-            case "WINTER": {
-                const img = await this._imageRepo.get("snow.png");
-                await fillBck(img);
-                break;
-            }
-            default: {
-                throw new Error(`Undefined board face "${scenario.board.face}"`);
-            }
+            const outlineImg = await this._imageRepo.get("outline.png");
+            await fillBck(outlineImg);
+            console.log(`[APP] Background tiles rendered in ${this._measure.end()}ms`);
         }
-        const outlineImg = await this._imageRepo.get("outline.png");
-        await fillBck(outlineImg);
-        console.log(`[APP] Background tiles rendered in ${this._measure.end()}ms`);
 
         if (this._conf.renderLayers.includes("lines")) {
             const firstHex = board.get(0, 8);

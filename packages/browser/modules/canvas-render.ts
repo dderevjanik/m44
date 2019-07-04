@@ -10,6 +10,10 @@ export class CanvasRender implements Renderer<HTMLImageElement, string> {
         this._font = null;
         this._canvas = document.createElement("canvas");
         this._ctx = this._canvas.getContext("2d")!;
+
+        // TODO: DEBUG
+        const appEl = document.getElementById("app") as HTMLDivElement;
+        appEl.appendChild(this._canvas);
     }
 
     async renderRect(x: number, y: number, w: number, h: number, style: string) {
@@ -40,8 +44,7 @@ export class CanvasRender implements Renderer<HTMLImageElement, string> {
     }
 
     async renderImage(img: HTMLImageElement, x: number, y: number): Promise<void> {
-        const nImg = new Image();
-        this._ctx.drawImage(nImg, x, y);
+        this._ctx.drawImage(img, x, y);
     }
 
     async renderText(text: string, x: number, y: number, w: number, h: number): Promise<void> {
