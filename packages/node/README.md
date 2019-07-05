@@ -2,5 +2,6 @@
 
 ## Todo
 
-- [ ] JimpRenderer/NodeCanvas should render image directly instead of creating new image
-    - [ ] IconRepo / ImageFileStorage should return image format for canvas instead of buffer
+- [ ] Fix issue with `file-loader` not being able to inference `ReturnType<t.Decoder>`
+- [ ] JimpRenderer/NodeCanvas should render sub-image directly instead of creating new image
+    - [ ] IconRepo / ImageFileStorage should return sub-image format for canvas instead of buffer

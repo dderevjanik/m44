@@ -5,14 +5,16 @@ import * as reporters from "io-ts-reporters";
 
 const log = log4js.getLogger("FILE-LOADER");
 
-export function fileLoader<T extends t.Type<any>>(filePath: string, decoder: T): t.TypeOf<T> {
+// export function fileLoader<T extends t.Type<any>>(filePath: string, decoder: T): t.TypeOf<T> {
+export function fileLoader(filePath: string, decoder: any): any {
     if (!fs.existsSync(filePath)) {
         log.error(`Path is not correct "${filePath}"`);
         throw new Error("incorrect_path");
     }
 
     let file: Buffer;
-    let data: t.TypeOf<T>;
+    // let data: t.TypeOf<T>;
+    let data: any;
     try {
         file = fs.readFileSync(filePath);
     } catch(err) {

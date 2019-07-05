@@ -29,8 +29,8 @@ export class M44Browser {
             dataUrl: this._conf.dataUrl,
             imageKey: this._conf.imageKey
         });
-        await imgls.sideLoad("countryside.png", "https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/patricksurry/aide-memoire/master/images/bg_188_217/countryside.png");
-        await imgls.sideLoad("outline.png", "https://cors-anywhere.herokuapp.com/https://raw.githubusercontent.com/patricksurry/aide-memoire/master/images/bg_188_217/outline.png");
+        await imgls.sideLoad("countryside.png", PROXY + "https://raw.githubusercontent.com/patricksurry/aide-memoire/master/images/bg_188_217/countryside.png");
+        await imgls.sideLoad("outline.png", PROXY + "https://raw.githubusercontent.com/patricksurry/aide-memoire/master/images/bg_188_217/outline.png");
         this._app = new App<HTMLImageElement, string>(
             sedData,
             new BrowserMeasure(),

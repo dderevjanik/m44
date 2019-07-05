@@ -2,10 +2,10 @@ import * as fs from "fs";
 import { App, AppConf } from "../core/app";
 import { fileLoader } from "./utils/file-loader";
 import { SedData } from "../types/sed_data";
+import { M44 } from "../types/m44";
 import { NodeMeasure } from "./modules/node-measure";
 import { NodeCanvasRender } from "./modules/node-canvas-render";
 import { ImageFileStorage } from "./modules/image-filestorage";
-import { M44 } from "../types/m44";
 
 interface Config {
     renderLayers: string[];
