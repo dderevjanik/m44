@@ -1,5 +1,45 @@
 import * as t from "io-ts";
 
+// TODO: Finish
+// export const EPlayerCountry = t.union([
+//     t.literal("DE"),
+//     t.literal("US"),
+//     t.literal("JP"),
+//     t.literal("GB"),
+// ]);
+
+// Supported version
+export const ESoftawre = t.literal("sed 1.2");
+
+export const EScenarioType = t.union([
+    t.literal("HISTORICAL"),
+    t.literal("FICTIONAL")
+]);
+
+export const EFront = t.union([
+    t.literal("WESTERN"),
+    t.literal("EASTERN"),
+    t.literal("PACIFIC"),
+    t.literal("MEDITERRANEAN")
+]);
+
+export const ESide = t.union([
+    t.literal("AXIS"),
+    t.literal("ALLIES")
+]);
+
+export const EStartingPlayer = t.union([
+    t.literal("PLAYER1"),
+    t.literal("PLAYER2"),
+    t.literal("SPECIAL")
+]);
+
+export const EBoardType = t.union([
+    t.literal("STANDARD"),
+    t.literal("OVERLORD"),
+    t.literal("BRKTHRU")
+]);
+
 export const EArmy = t.union([
     t.literal("us"),
     t.literal("ger"),

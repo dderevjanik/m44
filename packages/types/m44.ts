@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { EUnitName, EBoardFace } from "./shared";
+import { EUnitName, EBoardFace, EBoardType, EStartingPlayer, ESide, EFront, EScenarioType, ESoftawre } from "./shared";
 
 export const BoardUnit = t.strict({
     name: EUnitName,
@@ -42,7 +42,7 @@ export const BoardLabel = t.strict({
 export type BoardLabel = t.TypeOf<typeof BoardLabel>;
 
 export const Board = t.strict({
-    type: t.string,
+    type: EBoardType,
     face: EBoardFace,
     hexagons: t.array(t.strict({
         row: t.number,
@@ -76,15 +76,16 @@ export type Board = t.TypeOf<typeof Board>;
 export const M44 = t.strict({
     meta_data: t.strict({
         status: t.string,
-        software: t.string
+        software: ESoftawre
     }),
     game_info: t.strict({
         date_begin: t.string,
-        front: t.string,
-        type: t.string,
-        starting: t.string,
-        side_player1: t.string,
-        side_player2: t.string,
+        front: EFront,
+        type: EScenarioType,
+        starting: EStartingPlayer,
+        side_player1: ESide,
+        side_player2: ESide,
+        // TODO: Finish EPlayerCountry
         country_player1: t.string,
         country_player2: t.string,
         cards_player1: t.number,
