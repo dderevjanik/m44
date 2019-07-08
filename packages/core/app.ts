@@ -1,7 +1,7 @@
 import { ImageStorage } from "./types/imagestorage";
 import { SedData } from "../types/sed_data";
 import { M44 } from "../types/m44";
-import { Board } from "../types/board";
+import { Board, BoardConf } from "../types/board";
 import { IconRepo } from "./utils/icon-repo";
 import { IconDict } from "./utils/icon-dict";
 import { Measure } from "./types/measure";
@@ -28,6 +28,7 @@ export interface AppConf {
         },
         layers: [
             "background",
+            "outlines",
             "terrain",
             "lines",
             "rect_terrain",
@@ -73,12 +74,36 @@ export class App<IMG, RES> {
 
         // Gather information
 
+
+        const boardType = scenario.board.type;
+
+        let boardSize: BoardConf["boardSize"];
+        let size: [number, number];
+        switch (boardType) {
+            case "STANDARD": {
+                size = this._conf.board.board_sizes.standartd;
+                boardSize = sedData.editor.board_settings.board_size.list.standard;
+                break;
+            }
+            case "OVERLORD": {
+                size = this._conf.board.board_sizes.overlord;
+                boardSize = sedData.editor.board_settings.board_size.list.overlord;
+                break;
+            }
+            case "BRKTHRU": {
+                size = this._conf.board.board_sizes.brkthru;
+                boardSize = sedData.editor.board_settings.board_size.list.brkthru;
+                break;
+            }
+            default: {
+                throw new Error(`Uknown board type "${boardType}"`);
+            }
+        }
+
         const board = new Board({
             boardFace: sedData.editor.board_settings.board_face,
-            boardSize: sedData.editor.board_settings.board_size.list.standard
+            boardSize: boardSize
         });
-
-        const size = this._conf.board.board_sizes.standartd;
 
         console.log("[APP] creating dictionary of all icons with their names");
         const iconDict = new IconDict();
@@ -124,6 +149,18 @@ export class App<IMG, RES> {
         await renderer.loadFont("32px Arial");
         await renderer.resize(size[0], size[1]);
 
+        async function fillRow(row: number, imgs: [IMG, IMG]) {
+            const hexagons = board.getRow(row);
+            for (let i = 0; i < hexagons.length; i++) {
+                const hexagon = hexagons[i];
+                await renderer.renderImage(
+                    imgs[i % 2],
+                    parseFloat(hexagon.posX),
+                    parseFloat(hexagon.posY)
+                );
+            }
+        }
+
         async function fillBck(img: IMG) {
             for (const hexagon of board.all()) {
                 await renderer.renderImage(
@@ -138,33 +175,160 @@ export class App<IMG, RES> {
 
         if (this._conf.renderLayers.includes("background")) {
             this._measure.start();
-            switch(scenario.board.face) {
+            switch (scenario.board.face) {
                 case "BEACH": {
-                    const img = await this._imageRepo.get("beach.png");
-                    await fillBck(img);
+                    // country
+                    const imgCountry1_1 = await this._imageRepo.get("h_country-1-1.png");
+                    const imgCountry1_2 = await this._imageRepo.get("h_country-1-2.png");
+                    // country - beach
+                    const imgBeach1_2_1 = await this._imageRepo.get("h_beach1-2-1.png");
+                    const imgBeach1_2_2 = await this._imageRepo.get("h_beach1-2-2.png");
+                    // beach 1
+                    const imgBeach1_3_1 = await this._imageRepo.get("h_beach1-3-1.png");
+                    const imgBeach1_3_2 = await this._imageRepo.get("h_beach1-3-2.png");
+                    // beach 2
+                    const imgBeach1_4_1 = await this._imageRepo.get("h_beach1-4-1.png");
+                    const imgBeach1_4_2 = await this._imageRepo.get("h_beach1-4-2.png");
+                    // beach - sea
+                    const imgBeach1_5_1 = await this._imageRepo.get("h_beach1-5-1.png");
+                    const imgBeach1_5_2 = await this._imageRepo.get("h_beach1-5-2.png");
+                    // sea
+                    const imgSea1_6_1 = await this._imageRepo.get("h_sea1-6-1.png");
+                    const imgSea1_6_2 = await this._imageRepo.get("h_sea1-6-2.png");
+                    // deep sea
+                    const imgSea1_7_1 = await this._imageRepo.get("h_sea1-7-1.png");
+                    const imgSea1_7_2 = await this._imageRepo.get("h_sea1-7-2.png");
+
+                    if (boardType === "BRKTHRU") {
+                        await fillRow(0, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(1, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(2, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(3, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(4, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(5, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(6, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(7, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(8, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(9, [imgCountry1_1, imgCountry1_2]);
+
+                        await fillRow(10, [imgBeach1_2_1, imgBeach1_2_2]);
+                        await fillRow(11, [imgBeach1_3_1, imgBeach1_3_2]);
+                        await fillRow(12, [imgBeach1_4_1, imgBeach1_4_2]);
+                        await fillRow(13, [imgBeach1_5_1, imgBeach1_5_2]);
+
+                        await fillRow(14, [imgSea1_6_1, imgSea1_6_2]);
+                        await fillRow(15, [imgSea1_7_1, imgSea1_7_2]);
+                        await fillRow(16, [imgSea1_7_1, imgSea1_7_2]);
+                    } else {
+                        await fillRow(0, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(1, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(2, [imgCountry1_1, imgCountry1_2]);
+                        await fillRow(3, [imgBeach1_2_1, imgBeach1_2_2]);
+                        await fillRow(4, [imgBeach1_3_1, imgBeach1_3_2]);
+                        await fillRow(5, [imgBeach1_4_1, imgBeach1_4_2]);
+                        await fillRow(6, [imgBeach1_5_1, imgBeach1_5_2]);
+                        await fillRow(7, [imgSea1_6_1, imgSea1_6_2]);
+                        await fillRow(8, [imgSea1_7_1, imgSea1_7_2]);
+                    }
                     break;
                 }
                 case "COUNTRY": {
-                    const img = await this._imageRepo.get("countryside.png");
-                    await fillBck(img);
+                    const imgCntry10_1 = await this._imageRepo.get("h_country-10-1.png");
+                    const imgCntry10_2 = await this._imageRepo.get("h_country-10-2.png");
+                    const imgCntry11_1 = await this._imageRepo.get("h_country-11-1.png");
+                    const imgCntry11_2 = await this._imageRepo.get("h_country-11-2.png");
+                    const imgCntry12_1 = await this._imageRepo.get("h_country-12-1.png");
+                    const imgCntry12_2 = await this._imageRepo.get("h_country-12-2.png");
+
+                    await fillRow(0, [imgCntry10_1, imgCntry10_2]);
+                    await fillRow(1, [imgCntry11_1, imgCntry11_2]);
+                    await fillRow(2, [imgCntry12_1, imgCntry12_2]);
+                    await fillRow(3, [imgCntry10_1, imgCntry10_2]);
+                    await fillRow(4, [imgCntry11_1, imgCntry11_2]);
+                    await fillRow(5, [imgCntry12_1, imgCntry12_2]);
+                    await fillRow(6, [imgCntry10_1, imgCntry10_2]);
+                    await fillRow(7, [imgCntry11_1, imgCntry11_2]);
+                    await fillRow(8, [imgCntry12_1, imgCntry12_2]);
+                    if (boardType === "BRKTHRU") {
+                        await fillRow(9, [imgCntry10_1, imgCntry10_2]);
+                        await fillRow(10, [imgCntry11_1, imgCntry11_2]);
+                        await fillRow(11, [imgCntry12_1, imgCntry12_2]);
+                        await fillRow(12, [imgCntry10_1, imgCntry10_2]);
+                        await fillRow(13, [imgCntry11_1, imgCntry11_2]);
+                        await fillRow(14, [imgCntry12_1, imgCntry12_2]);
+                        await fillRow(15, [imgCntry10_1, imgCntry10_2]);
+                        await fillRow(16, [imgCntry11_1, imgCntry11_2]);
+                    }
                     break;
                 }
                 case "DESERT": {
-                    const img = await this._imageRepo.get("sand.png");
-                    await fillBck(img);
+                    const imgDesert1_1 = await this._imageRepo.get("h_desert-1-1.png");
+                    const imgDesert1_2 = await this._imageRepo.get("h_desert-1-2.png");
+                    const imgDesert2_1 = await this._imageRepo.get("h_desert-2-1.png");
+                    const imgDesert2_2 = await this._imageRepo.get("h_desert-2-2.png");
+                    const imgDesert3_1 = await this._imageRepo.get("h_desert-3-1.png");
+                    const imgDesert3_2 = await this._imageRepo.get("h_desert-3-2.png");
+
+                    await fillRow(0, [imgDesert1_1, imgDesert1_2]);
+                    await fillRow(1, [imgDesert2_1, imgDesert2_2]);
+                    await fillRow(2, [imgDesert3_1, imgDesert3_2]);
+                    await fillRow(3, [imgDesert1_1, imgDesert1_2]);
+                    await fillRow(4, [imgDesert2_1, imgDesert2_2]);
+                    await fillRow(5, [imgDesert3_1, imgDesert3_2]);
+                    await fillRow(6, [imgDesert1_1, imgDesert1_2]);
+                    await fillRow(7, [imgDesert2_1, imgDesert2_2]);
+                    await fillRow(8, [imgDesert3_1, imgDesert3_2]);
+                    if (boardType === "BRKTHRU") {
+                        await fillRow(9, [imgDesert1_1, imgDesert1_2]);
+                        await fillRow(10, [imgDesert2_1, imgDesert2_2]);
+                        await fillRow(11, [imgDesert3_1, imgDesert3_2]);
+                        await fillRow(12, [imgDesert1_1, imgDesert1_2]);
+                        await fillRow(13, [imgDesert2_1, imgDesert2_2]);
+                        await fillRow(14, [imgDesert3_1, imgDesert3_2]);
+                        await fillRow(15, [imgDesert1_1, imgDesert1_2]);
+                        await fillRow(16, [imgDesert2_1, imgDesert2_2]);
+                    }
                     break;
                 }
                 case "WINTER": {
-                    const img = await this._imageRepo.get("snow.png");
-                    await fillBck(img);
+                    const imgWinter1_1 = await this._imageRepo.get("h_winter-1-1.png");
+                    const imgWinter1_2 = await this._imageRepo.get("h_winter-1-2.png");
+                    const imgWinter2_1 = await this._imageRepo.get("h_winter-2-1.png");
+                    const imgWinter2_2 = await this._imageRepo.get("h_winter-2-2.png");
+                    const imgWinter3_1 = await this._imageRepo.get("h_winter-3-1.png");
+                    const imgWinter3_2 = await this._imageRepo.get("h_winter-3-2.png");
+
+                    await fillRow(0, [imgWinter1_1, imgWinter1_2]);
+                    await fillRow(1, [imgWinter2_1, imgWinter2_2]);
+                    await fillRow(2, [imgWinter3_1, imgWinter3_2]);
+                    await fillRow(3, [imgWinter1_1, imgWinter1_2]);
+                    await fillRow(4, [imgWinter2_1, imgWinter2_2]);
+                    await fillRow(5, [imgWinter3_1, imgWinter3_2]);
+                    await fillRow(6, [imgWinter1_1, imgWinter1_2]);
+                    await fillRow(7, [imgWinter2_1, imgWinter2_2]);
+                    await fillRow(8, [imgWinter3_1, imgWinter3_2]);
+                    if (boardType === "BRKTHRU") {
+                        await fillRow(9, [imgWinter1_1, imgWinter1_2]);
+                        await fillRow(10, [imgWinter2_1, imgWinter2_2]);
+                        await fillRow(11, [imgWinter3_1, imgWinter3_2]);
+                        await fillRow(12, [imgWinter1_1, imgWinter1_2]);
+                        await fillRow(13, [imgWinter2_1, imgWinter2_2]);
+                        await fillRow(14, [imgWinter3_1, imgWinter3_2]);
+                        await fillRow(15, [imgWinter1_1, imgWinter1_2]);
+                        await fillRow(16, [imgWinter2_1, imgWinter2_2]);
+                    }
+
                     break;
                 }
                 default: {
                     throw new Error(`Undefined board face "${scenario.board.face}"`);
                 }
             }
-            const outlineImg = await this._imageRepo.get("outline.png");
-            await fillBck(outlineImg);
+            if (this._conf.renderLayers.includes("outlines")) {
+                const outlineImg = await this._imageRepo.get("outline.png");
+                await fillBck(outlineImg);
+            }
+
             console.log(`[APP] Background tiles rendered in ${this._measure.end()}ms`);
         }
 

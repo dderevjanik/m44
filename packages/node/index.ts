@@ -49,7 +49,7 @@ export class M44Node {
             const img = await this._app.drawScenario(scenario);
             fs.writeFileSync(`${outputPath}.png`, img);
         } catch(err) {
-            throw new Error("Error whiel drawing a scenario: " + err);
+            throw new Error("Error while drawing a scenario, err:" + err);
         }
     }
 

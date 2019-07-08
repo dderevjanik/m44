@@ -34,6 +34,7 @@ export const config = {
         },
         layers: [
             "background",
+            "outlines",
             "terrain",
             "lines",
             "rect_terrain",

@@ -40,7 +40,7 @@ function getFileName(filePath: string) {
     const sedDataPath = conf.d || path.join(path.dirname(inputPath), "/", "sed_data.json");
     const renderLayers = conf.l
         ? conf.l.split(",").map(layer => layer.trim())
-        : ["background", "terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge", "lines"];
+        : ["background", "outlines", "terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge", "lines"];
 
     // validation
     if (!inputPath) {

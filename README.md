@@ -21,7 +21,7 @@ Mandatory arguments to long options are mandatory for short options too
     -o set output path for rendered .png file
     -g use glob patter for input files. You must also include -o output folder
     -l render only specific layers
-        background, terrain, rect_terrain, obstacle,tags, unit, label, badge, lines
+        background, terrain, outlines, rect_terrain, obstacle,tags, unit, label, badge, lines
 ```
 
 ### core
@@ -34,7 +34,7 @@ Node library that handles loading `.m44` and caching downloaded images on filesy
 
 ### types
 
-Shared types for `.m44` and `sedData`. Also includes `io-ts` schemas for parsing.
+Shared types for `.m44` and `sedData`. Also includes [io-ts](https://github.com/gcanti/io-ts) schemas for parsing JSONs.
 
 ### ui
 

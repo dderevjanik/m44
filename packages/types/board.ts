@@ -55,6 +55,15 @@ export class Board {
         }
     }
 
+    getRow(row: number): Hexagon[] {
+        if (row in this._board) {
+            const cols = Object.keys(this._board[row]);
+            return cols.map((col) => this._board[row][parseInt(col)]);
+        } else {
+            throw new Error(`row ${row}. doesn't exists on board`);
+        }
+    }
+
     /** Check if hexagon exists in board */
     exists(row: number, col: number): boolean {
         if (row in this._board && col in this._board[row]) {

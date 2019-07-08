@@ -12,7 +12,8 @@ Mandatory arguments to long options are mandatory for short options too
 -d path to sed_data.json
 -o set output path for rendered .png file
 -g use glob patter for input files. You must also include -o output folder
--l render only specific layers background,terrain,rect_terrain,obstacle,tags,unit,label,badge,lines
+-l render only specific layers (default all)
+    background, terrain, outlines, rect_terrain, obstacle, tags, unit, label, badge, lines
 ```
 
 ## Todo
