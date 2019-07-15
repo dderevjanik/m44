@@ -1,77 +1,81 @@
 import * as t from "io-ts";
 import { EUnitName, EBoardFace, EBoardType, EStartingPlayer, ESide, EFront, EScenarioType, ESoftawre } from "./shared";
 
-export const BoardUnit = t.strict({
+export const M44Unit = t.strict({
     name: EUnitName,
     badge: t.union([t.undefined, t.string]),
     nbr_units: t.union([t.undefined, t.string])
 });
-export type BoardUnit = t.TypeOf<typeof BoardUnit>;
+export type M44Unit = t.TypeOf<typeof M44Unit>;
 
-export const BoardTerrain = t.strict({
+export const M44Terrain = t.strict({
     name: t.string,
     orientation: t.union([t.undefined, t.number])
 });
-export type BoardTerrain = t.TypeOf<typeof BoardTerrain>;
+export type M44Terrain = t.TypeOf<typeof M44Terrain>;
 
-export const BoardObstacle = t.strict({
+export const M44Obstacle = t.strict({
     name: t.string,
     orientation: t.union([
         t.undefined,
         t.number
     ])
 });
-export type BoardObstacle = t.TypeOf<typeof BoardObstacle>;
+export type M44Obstacle = t.TypeOf<typeof M44Obstacle>;
 
-export const BoardRectTerrain = t.strict({
+export const M44RectTerrain = t.strict({
     name: t.string,
     orientation: t.union([t.undefined, t.number])
 });
-export type BoardRectTerrain = t.TypeOf<typeof BoardRectTerrain>;
+export type M44RectTerrain = t.TypeOf<typeof M44RectTerrain>;
 
-export const BoardTag = t.strict({
+export const M44Tag = t.strict({
     name: t.string
 });
-export type BoardTag = t.TypeOf<typeof BoardTag>;
+export type M44Tag = t.TypeOf<typeof M44Tag>;
 
-export const BoardLabel = t.strict({
+export const M44Label = t.strict({
     row: t.number,
     col: t.number,
     text: t.array(t.string)
 });
-export type BoardLabel = t.TypeOf<typeof BoardLabel>;
+export type M44Label = t.TypeOf<typeof M44Label>;
 
-export const Board = t.strict({
-    type: EBoardType,
-    face: EBoardFace,
-    hexagons: t.array(t.strict({
-        row: t.number,
-        col: t.number,
-        obstacle: t.union([
-            t.undefined,
-            BoardObstacle
-        ]),
-        unit: t.union([
-            t.undefined,
-            BoardUnit
-        ]),
-        rect_terrain: t.union([
-            t.undefined,
-            BoardRectTerrain,
-        ]),
-        terrain: t.union([
-            t.undefined,
-            BoardTerrain
-        ]),
-        tags: t.union([
-            t.undefined,
-            t.array(BoardTag)
-        ]),
-    })),
-    labels: t.array(BoardLabel)
+export const M44Hex = t.strict({
+    row: t.number,
+    col: t.number,
+    obstacle: t.union([
+        t.undefined,
+        M44Obstacle
+    ]),
+    unit: t.union([
+        t.undefined,
+        M44Unit
+    ]),
+    rect_terrain: t.union([
+        t.undefined,
+        M44RectTerrain,
+    ]),
+    terrain: t.union([
+        t.undefined,
+        M44Terrain
+    ]),
+    tags: t.union([
+        t.undefined,
+        t.array(M44Tag)
+    ]),
 });
 
-export type Board = t.TypeOf<typeof Board>;
+export type M44Hex = t.TypeOf<typeof M44Hex>;
+
+export const M44Board = t.strict({
+    type: EBoardType,
+    face: EBoardFace,
+    hexagons: t.array(M44Hex),
+    labels: t.array(M44Label)
+});
+
+export type M44Board = t.TypeOf<typeof M44Board>;
 
 export const M44 = t.strict({
     meta_data: t.strict({
@@ -93,7 +97,7 @@ export const M44 = t.strict({
         victory_player1: t.number,
         victory_player2: t.number
     }),
-    board: Board,
+    board: M44Board,
     packs: t.strict({
         base: t.union([t.undefined, t.number]),
         terrain: t.union([t.undefined, t.number]),

@@ -1,4 +1,5 @@
-import { SedData, BoardSize, Hexagon } from "./sed_data";
+import { SedData, BoardSize } from "./sed_data";
+import { BoardBackground } from "../core/board-background";
 
 type BoardSettings = SedData["editor"]["board_settings"];
 
@@ -7,32 +8,54 @@ export interface BoardConf {
     boardFace: BoardSettings["board_face"];
 }
 
+export interface BoardHex {
+    background: string;
+    col: number;
+    row: number;
+    posX: number;
+    posY: number;
+}
+
 /**
  * Used to determine x, y position in board of hexagons
  */
 export class Board {
 
+    _boardBackground: BoardBackground;
     _conf: BoardConf;
     _board: {
         [row: number]: {
-            [col: number]: Hexagon;
+            [col: number]: BoardHex;
         };
     };
 
-    constructor(conf: BoardConf) {
+    constructor(boardBackground: BoardBackground, conf: BoardConf) {
         this._conf = conf;
+        this._boardBackground = boardBackground;
         this._board = {};
 
         conf.boardSize.hexagons.item.forEach((hexagon) => {
             const { row, col } = hexagon;
-            const iRow = parseInt(row);
-            const iCol = parseInt(col);
+            const iRow = parseInt(row, 10);
+            const iCol = parseInt(col, 10);
 
             if (this._board[iRow]) {
-                this._board[iRow][iCol] = hexagon;
+                this._board[iRow][iCol] = {
+                    background: boardBackground.getBackground(iRow, iCol),
+                    row: parseInt(hexagon.row, 10),
+                    col: parseInt(hexagon.col, 10),
+                    posX: parseInt(hexagon.posX, 10),
+                    posY: parseInt(hexagon.posY, 10)
+                };
             } else {
                 this._board[iRow] = {
-                    [iCol]: hexagon
+                    [iCol]: {
+                        background: boardBackground.getBackground(iRow, iCol),
+                        row: parseInt(hexagon.row, 10),
+                        col: parseInt(hexagon.col, 10),
+                        posX: parseInt(hexagon.posX, 10),
+                        posY: parseInt(hexagon.posY, 10)
+                    }
                 };
             }
         });
@@ -47,20 +70,11 @@ export class Board {
     }
 
     /** Get position of hexagon in board */
-    get(row: number, col: number): Hexagon {
+    get(row: number, col: number): BoardHex {
         if (row in this._board && col in this._board[row]) {
             return this._board[row][col];
         } else {
             throw new Error(`hexagon [${row}, ${col}] doesn't exists on board`);
-        }
-    }
-
-    getRow(row: number): Hexagon[] {
-        if (row in this._board) {
-            const cols = Object.keys(this._board[row]);
-            return cols.map((col) => this._board[row][parseInt(col)]);
-        } else {
-            throw new Error(`row ${row}. doesn't exists on board`);
         }
     }
 
@@ -76,7 +90,7 @@ export class Board {
      * Iterate over all hexagons in board
      * @desc Used to fill board background with background tilesets
      */
-    *all(): IterableIterator<Hexagon> {
+    *all(): IterableIterator<BoardHex> {
         for (const [row, cols] of Object.entries(this._board)) {
             for (const [col, hex] of Object.entries(cols)) {
                 yield hex;

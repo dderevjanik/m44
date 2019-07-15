@@ -17,14 +17,14 @@ import {
     Side
 } from "./shared";
 
-export const Hexagon = t.strict({
+export const BoardHexagon = t.strict({
     col: t.string, // number
     row: t.string, // number
     posX: t.string, // number
     posY: t.string, // number
     _type: t.string
 });
-export type Hexagon = t.TypeOf<typeof Hexagon>;
+export type BoardHexagon = t.TypeOf<typeof BoardHexagon>;
 
 export const BoardSize = t.strict({
     value: t.string, // type
@@ -35,7 +35,7 @@ export const BoardSize = t.strict({
     access: t.string,
     label: t.string,
     hexagons: t.strict({
-        item: t.array(Hexagon),
+        item: t.array(BoardHexagon),
         _type: t.string
     }),
     _type: t.string
