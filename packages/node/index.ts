@@ -44,9 +44,9 @@ export class M44Node {
         if (this._app === null) {
             throw new Error("Please, initialize app first");
         }
-        const scenario = fileLoader(filePath, M44);
+        const m44: M44 = fileLoader(filePath, M44);
         try  {
-            const img = await this._app.drawScenario(scenario);
+            const img = await this._app.drawScenario(m44);
             fs.writeFileSync(`${outputPath}.png`, img);
         } catch(err) {
             throw new Error("Error while drawing a scenario, err:" + err);

@@ -1,11 +1,10 @@
-import { SedData, BoardSize } from "./sed_data";
-import { BoardBackground } from "../core/board-background";
+import { SedData, BoardSize } from "../types/sed_data";
+import { BoardBackground } from "./board-background";
 
 type BoardSettings = SedData["editor"]["board_settings"];
 
 export interface BoardConf {
     boardSize: BoardSize;
-    boardFace: BoardSettings["board_face"];
 }
 
 export interface BoardHex {
@@ -59,6 +58,13 @@ export class Board {
                 };
             }
         });
+    }
+
+    getSize(): [number, number] {
+        return [
+            parseInt(this._conf.boardSize.width),
+            parseInt(this._conf.boardSize.height)
+        ];
     }
 
     rows(): number {

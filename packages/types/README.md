@@ -1,5 +1,13 @@
 # M44 - Types
 
-## Todo
+This package contains shared types and also io-ts schemas
 
-- [ ] Add more types and constrains
+## SedData
+
+```ts
+```
+
+## M44
+
+```ts
+```
