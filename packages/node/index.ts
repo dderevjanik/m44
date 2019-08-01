@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { App, AppConf } from "../core/app";
+import { Core, CoreConf } from "../core/core";
 import { fileLoader } from "./utils/file-loader";
 import { SedData } from "../types/sed_data";
 import { M44 } from "../types/m44";
@@ -9,7 +9,7 @@ import { ImageFileStorage } from "./modules/image-filestorage";
 
 interface Config {
     renderLayers: string[];
-    board: AppConf["board"];
+    board: CoreConf["board"];
     dataUrl: string;
     imageDir: string;
 }
@@ -17,7 +17,7 @@ interface Config {
 export class M44Node {
 
     _conf: Config;
-    _app: App<Buffer, Buffer> | null = null;
+    _app: Core<Buffer, Buffer> | null = null;
 
     constructor(conf: Config) {
         this._conf = conf;
@@ -25,7 +25,7 @@ export class M44Node {
 
     async initialize(sedDataPath: string): Promise<void> {
         const sedData = fileLoader(sedDataPath, SedData);
-        this._app = new App<Buffer, Buffer>(
+        this._app = new Core<Buffer, Buffer>(
             sedData,
             new NodeMeasure(),
             new NodeCanvasRender(),

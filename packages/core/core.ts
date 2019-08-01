@@ -1,17 +1,17 @@
 import { ImageStorage } from "./types/imagestorage";
 import { SedData } from "../types/sed_data";
 import { M44 } from "../types/m44";
-import { Board, BoardConf } from "./board";
+import { Board } from "./board";
 import { IconRepo } from "./utils/icon-repo";
 import { IconDict } from "./utils/icon-dict";
 import { Measure } from "./types/measure";
 import { Renderer } from "./types/renderer";
 import { Scenario } from "./scenario";
-import { BoardBackground } from "./board-background";
+import { BackgroundPattern } from "./background-pattern";
 import { BoardType, boardTypes } from "./types/board-type";
 import { backgroundIcons } from "./types/icons";
 
-export interface AppConf {
+export interface CoreConf {
     renderLayers: string[]
     board: {
         hex_size: [number, number];
@@ -45,20 +45,20 @@ export interface AppConf {
     }
 }
 
-export class App<IMG, RES> {
+export class Core<IMG, RES> {
 
     _imageRepo: ImageStorage<IMG>;
     _sedData: SedData | null;
     _measure: Measure;
     _renderer: Renderer<IMG, RES>;
-    _conf: AppConf;
+    _conf: CoreConf;
 
     constructor(
         sedData: SedData,
         measure: Measure,
         renderer: Renderer<IMG, RES>,
         imageRepo: ImageStorage<IMG>,
-        conf: AppConf
+        conf: CoreConf
     ) {
         this._sedData = sedData;
         this._measure = measure;
@@ -71,7 +71,7 @@ export class App<IMG, RES> {
         console.log("[APP] drawing scenario");
         let boardType: BoardType = boardTypes[m44.board.type];
 
-        const boardBackground = new BoardBackground({
+        const boardBackground = new BackgroundPattern({
             boardFace: m44.board.face,
             boardSize: boardType.size,
             boardType: m44.board.type
@@ -181,7 +181,8 @@ export class App<IMG, RES> {
                 await renderer.renderImage(terrainImg, hex.posX, hex.posY);
 
             } else {
-                const backgroundImg = await iconRepo.get(hex.background);
+                const background = boardBackground.getBackground(hex.row, Math.floor(hex.col / 2));
+                const backgroundImg = await iconRepo.get(background);
                 await renderer.renderImage(backgroundImg, hex.posX, hex.posY);
 
                 if (hex.data.rect_terrain && this._conf.renderLayers.includes("rect_terrain")) {

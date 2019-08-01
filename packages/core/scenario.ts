@@ -1,17 +1,7 @@
 import { M44, M44Hex } from "../types/m44";
 import { Board } from "./board";
 
-interface ScenarioInfo {
-    board: {
-        size: [number, number];
-        face: string;
-        type: string;
-    };
-    hexagons: ScenarioHex[];
-}
-
 interface ScenarioHex {
-    background: string;
     row: number;
     col: number;
     posX: number;
@@ -74,7 +64,6 @@ export class Scenario {
                         row,
                         posX: boardHex.posX,
                         posY: boardHex.posY,
-                        background: boardHex.background,
                         data: hex ? {
                             obstacle: hex!.obstacle,
                             rect_terrain: hex!.rect_terrain,
@@ -98,7 +87,6 @@ export class Scenario {
             col,
             posX: boardHex.posX,
             posY: boardHex.posY,
-            background: boardHex.background,
             data: {}
         };
     }
@@ -113,10 +101,50 @@ export class Scenario {
     }
 
     info() {
+        const terrains = new Set<string>();
+        const rectTerrains = new Set<string>();
+        const units = new Set<string>();
+        const badges = new Set<string>();
+        const tags = new Set<string>();
+        const obstacles = new Set<string>();
+
+        for (const hex of this.allHexes()) {
+            if (hex.data.obstacle) {
+                obstacles.add(hex.data.obstacle.name);
+            }
+            if (hex.data.rect_terrain) {
+                rectTerrains.add(hex.data.rect_terrain.name);
+            }
+            if (hex.data.tags) {
+                for (const tag of hex.data.tags) {
+                    tags.add(tag.name);
+                }
+            }
+            if (hex.data.unit) {
+                units.add(hex.data.unit.name);
+                if (hex.data.unit.badge) {
+                    badges.add(hex.data.unit.badge);
+                }
+            }
+            if (hex.data.terrain) {
+                terrains.add(hex.data.terrain.name);
+            }
+        }
+
         return {
-            face: this._m44.board.face,
-            type: this._m44.board.type,
-            size: this._board.getSize()
+            board: {
+                face: this._m44.board.face,
+                type: this._m44.board.type,
+                size: this._board.getSize()
+            },
+            stats: {
+                terrains: Array.from(terrains.values()),
+                rectTerrains: Array.from(rectTerrains.values()),
+                units: Array.from(units.values()),
+                badges: Array.from(badges.values()),
+                tags: Array.from(tags.values()),
+                obstacles: Array.from(obstacles.values())
+            }
         };
     }
 

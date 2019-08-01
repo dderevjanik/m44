@@ -1,7 +1,5 @@
-import { SedData, BoardSize } from "../types/sed_data";
-import { BoardBackground } from "./board-background";
-
-type BoardSettings = SedData["editor"]["board_settings"];
+import { BoardSize } from "../types/sed_data";
+import { BackgroundPattern } from "./background-pattern";
 
 export interface BoardConf {
     boardSize: BoardSize;
@@ -20,7 +18,7 @@ export interface BoardHex {
  */
 export class Board {
 
-    _boardBackground: BoardBackground;
+    _boardBackground: BackgroundPattern;
     _conf: BoardConf;
     _board: {
         [row: number]: {
@@ -28,7 +26,7 @@ export class Board {
         };
     };
 
-    constructor(boardBackground: BoardBackground, conf: BoardConf) {
+    constructor(boardBackground: BackgroundPattern, conf: BoardConf) {
         this._conf = conf;
         this._boardBackground = boardBackground;
         this._board = {};

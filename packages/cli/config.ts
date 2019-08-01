@@ -1,5 +1,5 @@
 import * as log4js from "log4js";
-import { AppConf } from "../core/app";
+import { CoreConf } from "../core/core";
 
 export const config = {
     log4js: {
@@ -44,7 +44,7 @@ export const config = {
             "tags",
             "label"
         ]
-    } as AppConf["board"]
+    } as CoreConf["board"]
 };
 
 export type Config = (typeof config) & {

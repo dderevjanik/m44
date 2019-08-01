@@ -63,7 +63,7 @@ interface Config {
     boardSize: [number, number];
 }
 
-export class BoardBackground {
+export class BackgroundPattern {
 
     _background: Array<[string, string]>;
 

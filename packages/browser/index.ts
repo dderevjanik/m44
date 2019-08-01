@@ -1,5 +1,5 @@
 import { SedData } from "../types/sed_data";
-import { App, AppConf } from "../core/app";
+import { Core, CoreConf } from "../core/core";
 import { BrowserMeasure } from "./modules/browser-measure";
 import { CanvasRender } from "./modules/canvas-render";
 import { ImageLocalStorage } from "./modules/image-localstorage";
@@ -10,14 +10,14 @@ const PROXY = 'https://cors-anywhere.herokuapp.com/';
 
 interface Config {
     renderLayers: string[];
-    board: AppConf["board"];
+    board: CoreConf["board"];
     dataUrl: string;
     imageKey: string;
 }
 
 export class M44Browser {
 
-    _app: App<HTMLImageElement, string> | null = null;
+    _app: Core<HTMLImageElement, string> | null = null;
     _conf: Config;
 
     constructor(conf: Config) {
@@ -31,7 +31,7 @@ export class M44Browser {
         });
         await imgls.sideLoad("countryside.png", PROXY + "https://raw.githubusercontent.com/patricksurry/aide-memoire/master/images/bg_188_217/countryside.png");
         await imgls.sideLoad("outline.png", PROXY + "https://raw.githubusercontent.com/patricksurry/aide-memoire/master/images/bg_188_217/outline.png");
-        this._app = new App<HTMLImageElement, string>(
+        this._app = new Core<HTMLImageElement, string>(
             sedData,
             new BrowserMeasure(),
             new CanvasRender(),
