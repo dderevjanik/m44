@@ -10,6 +10,9 @@ export const BoardSize = t.interface({
     rHeight: t.number,
     access: t.string,
     label: t.string,
+    lines: t.array(t.tuple([
+        t.number, t.number, t.number, t.number
+    ])),
     hexagons: t.array(t.interface({
         col: t.number,
         row: t.number,

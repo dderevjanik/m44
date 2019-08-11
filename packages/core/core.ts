@@ -82,9 +82,6 @@ export class Core<IMG, RES> {
             height: boardSize.height
         });
 
-        // const board = new Board({
-        //     boardSize: this._sedData!.editor.board_settings.board_size.list[boardType.short]
-        // });
         const board = new Board(this._boardSizes, {
             face: m44.board.face,
             size: m44.board.type
@@ -114,33 +111,6 @@ export class Core<IMG, RES> {
         const renderer = this._renderer;
         await renderer.loadFont("32px Arial");
         await renderer.resize(boardSize.rWidth, boardSize.rHeight);
-
-        // if (this._conf.renderLayers.includes("lines")) {
-        //     console.log("[APP] Drawing lines");
-        //     const firstHex = scenario.getHex(0, 8);
-        //     const secondHex = scenario.getHex(0, 18);
-        //     const bottomHex = scenario.getHex(8, 8);
-
-        //     const l1x = firstHex.posX;
-        //     const l2x = secondHex.posX;
-
-        //     const y1 = firstHex.posY;
-        //     const y2 = bottomHex.posY + this._conf.board.hex_size[1];
-
-        //     // const rightLine = board.get(0, 9);
-        //     await renderer.renderDashedLine(l1x, y1, l1x, y2, {
-        //         length: 12,
-        //         step: 8,
-        //         width: 4,
-        //         style: "rgba(178, 34, 34, 0.8)"
-        //     });
-        //     await renderer.renderDashedLine(l2x, y1, l2x, y2, {
-        //         length: 12,
-        //         step: 8,
-        //         width: 4,
-        //         style: "rgba(178, 34, 34, 0.8)"
-        //     });
-        // }
 
         // Render Layers
         console.log("[APP] Starting rendering...");
@@ -180,19 +150,18 @@ export class Core<IMG, RES> {
                 // }
             }
         }
+        if (this._conf.renderLayers.includes("lines")) {
+            console.log("[APP] Drawing lines");
+            for (const line of boardSize.lines) {
+                await renderer.renderDashedLine(line[0], line[1], line[2], line[3], {
+                    length: 12,
+                    step: 8,
+                    width: 4,
+                    style: "rgba(178, 34, 34, 0.8)"
+                });
+            }
+        }
 
-        // if (this._conf.renderLayers.includes("label")) {
-        //     for (const label of scenario.board.labels) {
-        //         const hex = board.get(label.row, label.col);
-        //         await renderer.renderText(
-        //             label.text.join("\n"),
-        //             parseInt(hex.posX),
-        //             parseInt(hex.posY),
-        //             188,
-        //             217
-        //         );
-        //     }
-        // }
         console.log(`[APP] scenario rendered successfully in ${this._measure.end()}ms`);
 
         // Finish
