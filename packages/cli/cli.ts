@@ -38,6 +38,8 @@ function getFileName(filePath: string) {
     // obtain data from xargs
     const inputPath = conf._[0];
     const sedDataPath = conf.d || path.join(path.dirname(inputPath), "/", "sed_data.json");
+    const boardSizesPath = "./board_sizes.json"; // TODO: FIX
+
     const renderLayers = conf.l
         ? conf.l.split(",").map(layer => layer.trim())
         : ["background", "outlines", "terrain", "rect_terrain", "obstacle", "tags", "unit", "label", "badge", "lines"];
@@ -89,7 +91,11 @@ function getFileName(filePath: string) {
         imageDir: conf.imageRepo.imageDir,
         renderLayers: renderLayers
     });
-    await m44Node.initialize(sedDataPath);
+    try {
+        await m44Node.initialize(sedDataPath, boardSizesPath);
+    } catch(err) {
+        throw new Error(`Cannot initialize m44: ${err}`);
+    }
 
     if (conf._.length > 1) {
         for (const matchedPath of conf._) {

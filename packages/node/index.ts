@@ -6,6 +6,7 @@ import { M44 } from "../types/m44";
 import { NodeMeasure } from "./modules/node-measure";
 import { NodeCanvasRender } from "./modules/node-canvas-render";
 import { ImageFileStorage } from "./modules/image-filestorage";
+import { BoardSizes } from "../types/board_size";
 
 interface Config {
     renderLayers: string[];
@@ -23,10 +24,12 @@ export class M44Node {
         this._conf = conf;
     }
 
-    async initialize(sedDataPath: string): Promise<void> {
+    async initialize(sedDataPath: string, boardSizesPath: string): Promise<void> {
         const sedData = fileLoader(sedDataPath, SedData);
+        const boardSizes = fileLoader(boardSizesPath, BoardSizes);
         this._app = new Core<Buffer, Buffer>(
             sedData,
+            boardSizes,
             new NodeMeasure(),
             new NodeCanvasRender(),
             new ImageFileStorage({

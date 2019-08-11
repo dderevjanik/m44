@@ -4,8 +4,6 @@ import { Board } from "./board";
 interface ScenarioHex {
     row: number;
     col: number;
-    posX: number;
-    posY: number;
     data: {
         terrain?: {
             name: string;
@@ -53,7 +51,6 @@ export class Scenario {
     }
 
     getHex(row: number, col: number): ScenarioHex {
-        const boardHex = this._board.get(row, col);
         if (this._m44Board.has(row)) {
             const colHexes = this._m44Board.get(row);
             if (colHexes && colHexes.has(col)) {
@@ -62,8 +59,6 @@ export class Scenario {
                     return {
                         col,
                         row,
-                        posX: boardHex.posX,
-                        posY: boardHex.posY,
                         data: hex ? {
                             obstacle: hex!.obstacle,
                             rect_terrain: hex!.rect_terrain,
@@ -85,8 +80,6 @@ export class Scenario {
         return {
             row,
             col,
-            posX: boardHex.posX,
-            posY: boardHex.posY,
             data: {}
         };
     }
@@ -134,8 +127,7 @@ export class Scenario {
         return {
             board: {
                 face: this._m44.board.face,
-                type: this._m44.board.type,
-                size: this._board.getSize()
+                type: this._m44.board.type
             },
             stats: {
                 terrains: Array.from(terrains.values()),

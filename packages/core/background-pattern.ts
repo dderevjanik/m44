@@ -58,9 +58,10 @@ const WINTER: Array<[string, string]> = [
 ];
 
 interface Config {
-    boardType: "STANDARD" | "OVERLORD" | "BRKTHRU";
-    boardFace: "WINTER" | "BEACH" | "COUNTRY" | "DESERT";
-    boardSize: [number, number];
+    size: "STANDARD" | "OVERLORD" | "BRKTHRU";
+    face: "WINTER" | "BEACH" | "COUNTRY" | "DESERT";
+    width: number;
+    height: number;
 }
 
 export class BackgroundPattern {
@@ -68,13 +69,13 @@ export class BackgroundPattern {
     _background: Array<[string, string]>;
 
     constructor(conf: Config) {
-        this._background = conf.boardType === "BRKTHRU" && conf.boardFace === "BEACH"
+        this._background = conf.size === "BRKTHRU" && conf.face === "BEACH"
             ? BEACH_BRKTHRU
-            : conf.boardFace === "COUNTRY"
+            : conf.face === "COUNTRY"
                 ? COUNTRY
-                : conf.boardFace === "DESERT"
+                : conf.face === "DESERT"
                     ? DESERT
-                    : conf.boardFace === "WINTER"
+                    : conf.face === "WINTER"
                         ? WINTER
                         : BEACH;
     }
