@@ -148,20 +148,22 @@ export class Core<IMG, RES> {
         for (const hexagon of board.all()) {
             const scenarioHex = scenario.getHex(hexagon.row, hexagon.col);
             if (scenarioHex.data.terrain) {
+                // render terrain instead of background
                 const terrainImg = await iconRepo.getRotated(scenarioHex.data.terrain.name, scenarioHex.data.terrain.orientation);
                 await renderer.renderImage(terrainImg, hexagon.posX, hexagon.posY);
 
-            } else {
+            }  else {
                 const background = boardBackground.getBackground(hexagon.row, Math.floor(hexagon.col / 2));
                 const backgroundImg = await iconRepo.get(background);
                 await renderer.renderImage(backgroundImg, hexagon.posX, hexagon.posY);
-
+            }
+            if (scenarioHex.data) {
                 if (scenarioHex.data.rect_terrain && this._conf.renderLayers.includes("rect_terrain")) {
-                    const rectTerrainImg = await iconRepo.get(scenarioHex.data.rect_terrain.name);
+                    const rectTerrainImg = await iconRepo.getRotated(scenarioHex.data.rect_terrain.name, scenarioHex.data.rect_terrain.orientation);
                     await renderer.renderImage(rectTerrainImg, hexagon.posX, hexagon.posY);
                 }
                 if (scenarioHex.data.obstacle && this._conf.renderLayers.includes("obstacle")) {
-                    const obstacleImg = await iconRepo.get(scenarioHex.data.obstacle.name);
+                    const obstacleImg = await iconRepo.getRotated(scenarioHex.data.obstacle.name, scenarioHex.data.obstacle.orientation);
                     await renderer.renderImage(obstacleImg, hexagon.posX, hexagon.posY);
                 }
                 if (scenarioHex.data.unit && this._conf.renderLayers.includes("unit")) {
