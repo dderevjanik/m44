@@ -3,14 +3,13 @@ import { SedData } from "../types/sed_data";
 import { M44 } from "../types/m44";
 import { Board } from "./board";
 import { IconRepo } from "./utils/icon-repo";
-import { IconDict } from "./utils/icon-dict";
 import { Measure } from "./types/measure";
 import { Renderer } from "./types/renderer";
 import { Scenario } from "./scenario";
 import { BackgroundPattern } from "./background-pattern";
-import { BoardType, boardTypes } from "./types/board-type";
 import { backgroundIcons } from "./types/icons";
 import { BoardSizes, BoardSize } from "../types/board_size";
+import { getImagesDict } from "./utils/get-images-dict";
 
 export interface CoreConf {
     renderLayers: string[]
@@ -102,48 +101,13 @@ export class Core<IMG, RES> {
         // Gather information
 
         console.log("[APP] creating dictionary of all icons with their names");
-        const iconDict = new IconDict();
-
-        console.log("[APP] creating background dictionary");
+        const iconDict: Map<string, string> = getImagesDict(sedData);
         for (const [background, backgroundIcon] of Object.entries(backgroundIcons)) {
             iconDict.set(background, backgroundIcon);
         }
 
-        console.log("[APP] creating terrain dictionary");
-        for (const category of sedData.editor.terrain.item) {
-            for (const terrain of category.list.item) {
-                iconDict.set(terrain.name, terrain.icon);
-            }
-        }
+        // writeFileSync("./XXXX.json", JSON.stringify(dict, null, 2));
 
-        console.log("[APP] creating unit dictionary");
-        for (const category of sedData.editor.unit.item) {
-            for (const unit of category.list.item) {
-                iconDict.set(unit.name, unit.icon);
-            }
-        }
-
-        console.log("[APP] creating obstacle dictionary");
-        for (const category of sedData.editor.obstacle.item) {
-            for (const obstacle of category.list.item) {
-                iconDict.set(obstacle.name, obstacle.icon);
-            }
-        }
-
-        console.log("[APP] creating marker dictionary");
-        for (const category of sedData.editor.marker.item) {
-            for (const marker of category.list.item) {
-                iconDict.set(marker.name, marker.icon);
-            }
-        }
-
-        console.log("[APP] creating badge dictionary");
-        for (const badge of sedData.editor.badges.item) {
-            iconDict.set(badge.name, badge.icon);
-        }
-
-        // Prepare repo and renderer
-        console.log("[APP] creating iconRepo");
         const iconRepo = new IconRepo(this._imageRepo, iconDict);
 
         console.log("[APP] preparing rendered");

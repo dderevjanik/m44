@@ -1,6 +1,4 @@
 import fs from "fs";
-import * as log4js from "log4js";
-import * as t from "io-ts";
 import * as reporters from "io-ts-reporters";
 
 // export function fileLoader<T extends t.Type<any>>(filePath: string, decoder: T): t.TypeOf<T> {
