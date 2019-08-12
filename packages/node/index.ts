@@ -1,12 +1,12 @@
 import * as fs from "fs";
 import { Core, CoreConf } from "../core/core";
 import { fileLoader } from "./utils/file-loader";
-import { SedData } from "../types/sed_data";
-import { M44 } from "../types/m44";
+import { SedData } from "../shared/sed_data";
+import { M44 } from "../shared/m44";
 import { NodeMeasure } from "./modules/node-measure";
 import { NodeCanvasRender } from "./modules/node-canvas-render";
 import { ImageFileStorage } from "./modules/image-filestorage";
-import { BoardSizes } from "../types/board_size";
+import { BoardSizes } from "../shared/board_size";
 
 interface Config {
     renderLayers: string[];

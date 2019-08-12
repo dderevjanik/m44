@@ -2,8 +2,8 @@ import * as t from "io-ts";
 import * as reporters from "io-ts-reporters";
 import { M44Browser } from "../browser/index";
 import { config } from "./config";
-import { M44 } from "../types/m44";
-import { SedData } from "../types/sed_data";
+import { M44 } from "../shared/m44";
+import { SedData } from "../shared/sed_data";
 
 (async () => {
     // Initialize HTML Elements

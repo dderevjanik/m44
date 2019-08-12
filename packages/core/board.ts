@@ -1,4 +1,4 @@
-import { BoardSizes, BoardSize } from "../types/board_size";
+import { BoardSizes, BoardSize } from "../shared/board_size";
 import { BackgroundPattern } from "./background-pattern";
 
 export interface BoardConf {

@@ -1,6 +1,6 @@
 import { ImageStorage } from "./types/imagestorage";
-import { SedData } from "../types/sed_data";
-import { M44 } from "../types/m44";
+import { SedData } from "../shared/sed_data";
+import { M44 } from "../shared/m44";
 import { Board } from "./board";
 import { IconRepo } from "./utils/icon-repo";
 import { Measure } from "./types/measure";
@@ -8,7 +8,7 @@ import { Renderer } from "./types/renderer";
 import { Scenario } from "./scenario";
 import { BackgroundPattern } from "./background-pattern";
 import { backgroundIcons } from "./types/icons";
-import { BoardSizes, BoardSize } from "../types/board_size";
+import { BoardSizes, BoardSize } from "../shared/board_size";
 import { getImagesDict } from "./utils/get-images-dict";
 
 export interface CoreConf {

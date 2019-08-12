@@ -1,4 +1,4 @@
-import { SedData } from "../../types/sed_data";
+import { SedData } from "../../shared/sed_data";
 import { replaceAt } from "./utils";
 
 export function getImagesDict(sedData: SedData) {

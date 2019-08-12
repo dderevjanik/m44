@@ -1,4 +1,4 @@
-import { M44, M44Hex } from "../types/m44";
+import { M44, M44Hex } from "../shared/m44";
 import { Board } from "./board";
 
 interface ScenarioHex {

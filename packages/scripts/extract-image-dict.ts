@@ -4,7 +4,7 @@ import nconf from "nconf";
 import log4js from "log4js";
 import * as reporters from "io-ts-reporters";
 import { readFileSync } from "fs";
-import { SedData } from "../types/sed_data";
+import { SedData } from "../shared/sed_data";
 import { getImagesDict } from "../core/utils/get-images-dict";
 
 const config = {

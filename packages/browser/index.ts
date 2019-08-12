@@ -1,9 +1,9 @@
-import { SedData } from "../types/sed_data";
+import { SedData } from "../shared/sed_data";
 import { Core, CoreConf } from "../core/core";
 import { BrowserMeasure } from "./modules/browser-measure";
 import { CanvasRender } from "./modules/canvas-render";
 import { ImageLocalStorage } from "./modules/image-localstorage";
-import { M44 } from "../types/m44";
+import { M44 } from "../shared/m44";
 
 // HACKY
 const PROXY = 'https://cors-anywhere.herokuapp.com/';
