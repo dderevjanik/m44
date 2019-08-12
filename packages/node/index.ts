@@ -32,7 +32,7 @@ export class M44Node {
             boardSizes,
             new NodeMeasure(),
             new NodeCanvasRender(),
-            new ImageFileStorage({
+            new ImageFileStorage(imagesDict, {
                 dataUrl: this._conf.dataUrl,
                 imageDir: this._conf.imageDir
             }),

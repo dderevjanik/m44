@@ -1,7 +1,7 @@
 import { ImageStorage } from "../../core/types/imagestorage";
 
 // HACKY
-const PROXY = 'https://cors-anywhere.herokuapp.com/';
+// const PROXY = 'https://cors-anywhere.herokuapp.com/';
 
 /**
  * Avoid CORS
@@ -22,57 +22,57 @@ function convertToBase64(canvas: HTMLCanvasElement, img: HTMLImageElement) {
  * Avoid Canvas
  * @url {https://stackoverflow.com/questions/22172604/convert-image-url-to-base64}
  */
-function toDataUrl(url: string): Promise<string> {
-    const xhr = new XMLHttpRequest();
-    return new Promise((resolve, reject) => {
-        xhr.onload = function() {
-            const reader = new FileReader();
-            reader.onloadend = function() {
-                if (reader.result === null) {
-                    reject("Cannot convert an image");
-                } else {
-                    resolve(reader.result.toString());
-                }
-            }
-            reader.readAsDataURL(xhr.response);
-        };
-        xhr.onerror = reject;
-        xhr.open('GET', PROXY + url);
-        xhr.responseType = 'blob';
-        xhr.send();
-    });
-}
+// function toDataUrl(url: string): Promise<string> {
+//     const xhr = new XMLHttpRequest();
+//     return new Promise((resolve, reject) => {
+//         xhr.onload = function() {
+//             const reader = new FileReader();
+//             reader.onloadend = function() {
+//                 if (reader.result === null) {
+//                     reject("Cannot convert an image");
+//                 } else {
+//                     resolve(reader.result.toString());
+//                 }
+//             }
+//             reader.readAsDataURL(xhr.response);
+//         };
+//         xhr.onerror = reject;
+//         xhr.open('GET', PROXY + url);
+//         xhr.responseType = 'blob';
+//         xhr.send();
+//     });
+// }
 
 /**
  * Avoid CORS and Canvas
  * @url {https://stackoverflow.com/questions/29644474/how-to-be-able-to-convert-image-to-base64-and-avoid-same-origin-policy}
  */
-function toBase64UsingBytes(url: string): Promise<string> {
-    const xhr = new XMLHttpRequest();
-    return new Promise((resolve, reject) => {
-        xhr.open('GET', url, true);
+// function toBase64UsingBytes(url: string): Promise<string> {
+//     const xhr = new XMLHttpRequest();
+//     return new Promise((resolve, reject) => {
+//         xhr.open('GET', url, true);
 
-        xhr.responseType = 'arraybuffer';
+//         xhr.responseType = 'arraybuffer';
 
-        xhr.onload = function(e) {
-           if (this.status == 200) {
-               const uInt8Array = new Uint8Array(this.response); // Note:not xhr.responseText
+//         xhr.onload = function(e) {
+//            if (this.status == 200) {
+//                const uInt8Array = new Uint8Array(this.response); // Note:not xhr.responseText
 
-               for (let i = 0, len = uInt8Array.length; i < len; ++i) {
-                   uInt8Array[i] = this.response[i];
-               }
+//                for (let i = 0, len = uInt8Array.length; i < len; ++i) {
+//                    uInt8Array[i] = this.response[i];
+//                }
 
-               const byte3 = uInt8Array[4]; // byte at offset 4
-               resolve(byte3.toString());
-           }
-        }
-        xhr.onerror = function(err) {
-            reject(err);
-        }
+//                const byte3 = uInt8Array[4]; // byte at offset 4
+//                resolve(byte3.toString());
+//            }
+//         }
+//         xhr.onerror = function(err) {
+//             reject(err);
+//         }
 
-        xhr.send();
-    });
-}
+//         xhr.send();
+//     });
+// }
 
 function createImageFromBase64(base64: string): Promise<HTMLImageElement> {
     const image = new Image();
@@ -97,7 +97,7 @@ function createImage(url: string): Promise<HTMLImageElement> {
         image.onerror = (err) => {
             reject(err);
         }
-        image.src = PROXY + url;
+        image.src = url;
     });
 }
 
@@ -115,7 +115,7 @@ export class ImageLocalStorage implements ImageStorage<HTMLImageElement> {
     /** used to convert images to base64 */
     private _canvas: HTMLCanvasElement;
 
-    constructor(conf: Config) {
+    constructor(imagesDict: { [image: string]: string }, conf: Config) {
         this._conf = conf;
         this._memory = {};
         this._canvas = document.createElement("canvas");

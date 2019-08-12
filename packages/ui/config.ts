@@ -1,8 +1,9 @@
-import { AppConf } from "../core/app";
+import { CoreConf } from "../core/core";
 
 export const config = {
     imageRepo: {
-        dataUrl: "http://static.daysofwonder.com/memoir44/sed_images/",
+        // dataUrl: "http://static.daysofwonder.com/memoir44/sed_images/",
+        dataUrl: "images/",
         imageDir: "m44-images"
     },
     board: {
@@ -24,6 +25,7 @@ export const config = {
         },
         layers: [
             "background",
+            "outlines",
             "terrain",
             "lines",
             "rect_terrain",
@@ -33,5 +35,5 @@ export const config = {
             "tags",
             "label"
         ]
-    } as AppConf["board"]
+    } as CoreConf["board"]
 };
