@@ -54,6 +54,9 @@ export class Core<IMG, RES> {
     _renderer: Renderer<IMG, RES>;
     _conf: CoreConf;
 
+    // @ts-ignore
+    _iconRepo: IconRepo<IMG>;
+
     constructor(
         sedData: SedData,
         boardSizes: BoardSizes,
@@ -70,8 +73,54 @@ export class Core<IMG, RES> {
         this._conf = conf;
     }
 
-    async drawScenario(m44: M44): Promise<RES> {
+    initIcons() {
+        console.log("[APP] creating dictionary of all icons with their names");
+        const sedData = this._sedData;
+        if (sedData === null) {
+            console.error("[APP] Please intialize sedData before initIcons()");
+            throw new Error("seddata_not_initialized");
+        }
+        const iconDict: Map<string, string> = getImagesDict(sedData);
+        for (const [background, backgroundIcon] of Object.entries(backgroundIcons)) {
+            iconDict.set(background, backgroundIcon);
+        }
+
+        this._iconRepo = new IconRepo(this._imageRepo, iconDict);
+    }
+
+    async renderBoard(canvas: Renderer<IMG, RES>, conf: {
+        size: "STANDARD" | "OVERLORD" | "BRKTHRU",
+        face: "WINTER" | "BEACH" | "COUNTRY" | "DESERT"
+    }): Promise<void> {
+        console.log(`[APP] Drawing board with '${conf.size}' size and with '${conf.face}' face`);
+        const iconRepo = this._iconRepo;
+        const boardSize: BoardSize = this._boardSizes[conf.size];
+        const boardBackground = new BackgroundPattern({
+            face: conf.face,
+            size: conf.size,
+            width: boardSize.width,
+            height: boardSize.height
+        });
+        const board = new Board(this._boardSizes, {
+            face: conf.face,
+            size: conf.size
+        });
+
+        await canvas.resize(boardSize.rWidth, boardSize.rHeight);
+        for (const hexagon of board.all()) {
+            const background = boardBackground.getBackground(hexagon.row, Math.floor(hexagon.col / 2));
+            const backgroundImg = await iconRepo.get(background);
+            await canvas.renderImage(backgroundImg, hexagon.posX, hexagon.posY);
+        }
+    }
+
+    async drawScenario(canvas: Renderer<IMG, RES>, m44: M44): Promise<void> {
         console.log("[APP] drawing scenario");
+        const iconRepo = this._iconRepo;
+        if (iconRepo === undefined) {
+            console.error("[APP] initIcons() not initialized");
+            throw new Error("init_iconss_not_initialized");
+        }
         const scenarioSize = m44.board.type;
         const boardSize: BoardSize = this._boardSizes[scenarioSize];
 
@@ -95,23 +144,6 @@ export class Core<IMG, RES> {
             throw new Error("data_or_scenario_not_initialized");
         }
 
-        // Gather information
-
-        console.log("[APP] creating dictionary of all icons with their names");
-        const iconDict: Map<string, string> = getImagesDict(sedData);
-        for (const [background, backgroundIcon] of Object.entries(backgroundIcons)) {
-            iconDict.set(background, backgroundIcon);
-        }
-
-        // writeFileSync("./XXXX.json", JSON.stringify(dict, null, 2));
-
-        const iconRepo = new IconRepo(this._imageRepo, iconDict);
-
-        console.log("[APP] preparing rendered");
-        const renderer = this._renderer;
-        await renderer.loadFont("32px Arial");
-        await renderer.resize(boardSize.rWidth, boardSize.rHeight);
-
         // Render Layers
         console.log("[APP] Starting rendering...");
         this._measure.start();
@@ -120,28 +152,23 @@ export class Core<IMG, RES> {
             if (scenarioHex.data.terrain) {
                 // render terrain instead of background
                 const terrainImg = await iconRepo.getRotated(scenarioHex.data.terrain.name, scenarioHex.data.terrain.orientation);
-                await renderer.renderImage(terrainImg, hexagon.posX, hexagon.posY);
-
-            }  else {
-                const background = boardBackground.getBackground(hexagon.row, Math.floor(hexagon.col / 2));
-                const backgroundImg = await iconRepo.get(background);
-                await renderer.renderImage(backgroundImg, hexagon.posX, hexagon.posY);
+                await canvas.renderImage(terrainImg, hexagon.posX, hexagon.posY);
             }
             if (scenarioHex.data) {
                 if (scenarioHex.data.rect_terrain && this._conf.renderLayers.includes("rect_terrain")) {
                     const rectTerrainImg = await iconRepo.getRotated(scenarioHex.data.rect_terrain.name, scenarioHex.data.rect_terrain.orientation);
-                    await renderer.renderImage(rectTerrainImg, hexagon.posX, hexagon.posY);
+                    await canvas.renderImage(rectTerrainImg, hexagon.posX, hexagon.posY);
                 }
                 if (scenarioHex.data.obstacle && this._conf.renderLayers.includes("obstacle")) {
                     const obstacleImg = await iconRepo.getRotated(scenarioHex.data.obstacle.name, scenarioHex.data.obstacle.orientation);
-                    await renderer.renderImage(obstacleImg, hexagon.posX, hexagon.posY);
+                    await canvas.renderImage(obstacleImg, hexagon.posX, hexagon.posY);
                 }
                 if (scenarioHex.data.unit && this._conf.renderLayers.includes("unit")) {
                     const unitImg = await iconRepo.get(scenarioHex.data.unit.name);
-                    await renderer.renderImage(unitImg, hexagon.posX, hexagon.posY);
+                    await canvas.renderImage(unitImg, hexagon.posX, hexagon.posY);
                     if (scenarioHex.data.unit.badge && this._conf.renderLayers.includes("badge")) {
                         const badgeImg = await iconRepo.get(scenarioHex.data.unit.badge);
-                        await renderer.renderImage(badgeImg, hexagon.posX, hexagon.posY);
+                        await canvas.renderImage(badgeImg, hexagon.posX, hexagon.posY);
                     }
                 }
                 // if (hex.data.tags && this._conf.renderLayers.includes("tags")) {
@@ -153,7 +180,7 @@ export class Core<IMG, RES> {
         if (this._conf.renderLayers.includes("lines")) {
             console.log("[APP] Drawing lines");
             for (const line of boardSize.lines) {
-                await renderer.renderDashedLine(line[0], line[1], line[2], line[3], {
+                await canvas.renderDashedLine(line[0], line[1], line[2], line[3], {
                     length: 12,
                     step: 8,
                     width: 4,
@@ -163,10 +190,5 @@ export class Core<IMG, RES> {
         }
 
         console.log(`[APP] scenario rendered successfully in ${this._measure.end()}ms`);
-
-        // Finish
-
-        const resultImg = await renderer.getResult();
-        return resultImg;
     }
 }

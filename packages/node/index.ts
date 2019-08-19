@@ -32,7 +32,7 @@ export class M44Node {
             boardSizes,
             new NodeMeasure(),
             new NodeCanvasRender(),
-            new ImageFileStorage(imagesDict, {
+            new ImageFileStorage({
                 dataUrl: this._conf.dataUrl,
                 imageDir: this._conf.imageDir
             }),
@@ -41,6 +41,7 @@ export class M44Node {
                 renderLayers: this._conf.renderLayers
             }
         );
+        this._app.initIcons();
     }
 
     async drawScenario(filePath: string, outputPath?: string): Promise<void> {
@@ -49,7 +50,13 @@ export class M44Node {
         }
         const m44: M44 = fileLoader(filePath, M44);
         try  {
-            const img = await this._app.drawScenario(m44);
+            // const x = await this._app.renderBoard()
+            const ctx = new NodeCanvasRender();
+            await ctx.loadFont("32px Arial");
+            await this._app.renderBoard(ctx, { face: m44.board.face, size: m44.board.type });
+            await this._app.drawScenario(ctx, m44);
+
+            const img = await ctx.getResult();
             fs.writeFileSync(`${outputPath}.png`, img);
         } catch(err) {
             throw new Error("Error while drawing a scenario, err:" + err);
