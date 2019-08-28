@@ -25,8 +25,9 @@ export class M44Browser {
         this._conf = conf;
     }
 
-    async initialize(sedData: SedData, boardSizes: BoardSizes, images: { [image: string]: string }) {
-        const imgls = new ImageLocalStorage(imagesDict, {
+    async initialize(sedData: SedData, boardSizes: BoardSizes, imagesList: { [image: string]: string }) {
+
+        const imgls = new ImageLocalStorage(imagesList, {
             dataUrl: this._conf.dataUrl,
             imageKey: this._conf.imageKey
         });
@@ -36,7 +37,6 @@ export class M44Browser {
             sedData,
             boardSizes,
             new BrowserMeasure(),
-            new CanvasRender(),
             imgls,
             {
                 board: this._conf.board,
@@ -54,10 +54,22 @@ export class M44Browser {
         );
     }
 
-    async drawScenario(scenario: M44): Promise<string> {
-        // TODO: Fix !
-        const base64 = await this._app!.drawScenario(scenario);
-        return base64;
-    }
+    // async renderBoard(ctx: CanvasRender, size: "STANDARD" | "OVERLORD" | "BRKTHRU", face: "BEACH" | "COUNTRY" | "DESERT" | "WINTER") {
+    //     if (!this._app) {
+    //         throw new Error('app is not initialized');
+    //     }
+    //     this._app.drawBoard(ctx, {
+    //         face,
+    //         size
+    //     });
+    // }
+
+    // async renderScenario(ctx: CanvasRender, scenario: M44): Promise<void> {
+    //     // TODO: Fix !
+    //     if (!this._app) {
+    //         throw new Error('app is not initialized');
+    //     }
+    //     this._app.drawScenario(ctx, scenario);
+    // }
 
 }

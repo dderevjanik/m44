@@ -31,7 +31,6 @@ export class M44Node {
             sedData,
             boardSizes,
             new NodeMeasure(),
-            new NodeCanvasRender(),
             new ImageFileStorage({
                 dataUrl: this._conf.dataUrl,
                 imageDir: this._conf.imageDir
@@ -53,8 +52,13 @@ export class M44Node {
             // const x = await this._app.renderBoard()
             const ctx = new NodeCanvasRender();
             await ctx.loadFont("32px Arial");
-            await this._app.renderBoard(ctx, { face: m44.board.face, size: m44.board.type });
-            await this._app.drawScenario(ctx, m44);
+            const scenario = this._app.createScenario(m44);
+            await scenario.drawBackgroundLayer(ctx);
+            await scenario.drawSceanrioLayer(ctx, {
+                renderLayers: this._conf.renderLayers
+            });
+            // await this._app.drawBoard(ctx, { face: m44.board.face, size: m44.board.type });
+            // await this._app.drawScenario(ctx, m44);
 
             const img = await ctx.getResult();
             fs.writeFileSync(`${outputPath}.png`, img);

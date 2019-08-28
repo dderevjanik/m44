@@ -1,5 +1,6 @@
 import { BoardSizes, BoardSize } from "../shared/board_size";
 import { BackgroundPattern } from "./background-pattern";
+import { Renderer } from "./types/renderer";
 
 export interface BoardConf {
     size: "STANDARD" | "OVERLORD" | "BRKTHRU";
