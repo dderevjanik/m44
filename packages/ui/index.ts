@@ -1,4 +1,3 @@
-import * as t from "io-ts";
 import * as reporters from "io-ts-reporters";
 import { M44Browser } from "../browser/index";
 import { config } from "./config";
@@ -11,9 +10,8 @@ import ImagesJSON from "../../images.json";
 
 (async () => {
 //     // Initialize HTML Elements
-    const canvasEl = document.getElementById("m44-canvas");
-    const sedDataInp = document.getElementById("m44-sed-data");
-    const m44Inp = document.getElementById("m44-scenario");
+    const canvasEl = document.getElementById("m44-canvas") as HTMLCanvasElement;
+    const m44Inp = document.getElementById("m44-scenario") as HTMLInputElement;
 
     if (canvasEl === null) {
         throw new Error("m44-canvas <canvas/> is missing!");
@@ -39,7 +37,7 @@ import ImagesJSON from "../../images.json";
         ]
     });
     // @ts-ignore
-    m44.initialize(SedDataJSON, BoardSizesJSON, imagesJSON);
+    m44.initialize(SedDataJSON, BoardSizesJSON, ImagesJSON);
 
     m44Inp.addEventListener("change", (e) => {
         console.log("[UI] Loading scenario from <input/>");
@@ -60,8 +58,15 @@ import ImagesJSON from "../../images.json";
                 } else {
                     localStorage.setItem("m44-scenario", JSON.stringify(scenario));
                 }
-                const drawResult = await m44.drawScenario(scenario);
-                console.log(drawResult);
+                const scn = await m44._app!.createScenario(scenario);
+
+                const ctx = canvasEl.getContext('2d');
+                if (ctx) {
+                    scn.drawBackgroundLayer(ctx as any);
+                } else {
+                    console.log('cannot initialize drawing context 2d');
+                }
+
             } catch(err) {
                 console.log(err);
                 console.error(`[UI] Cannot parse '${file.name}' loaded from <input/>`);

@@ -1,6 +1,5 @@
 import { BoardSizes, BoardSize } from "../shared/board_size";
 import { BackgroundPattern } from "./background-pattern";
-import { Renderer } from "./types/renderer";
 
 export interface BoardConf {
     size: "STANDARD" | "OVERLORD" | "BRKTHRU";
@@ -18,21 +17,21 @@ export interface BoardHex {
 /**
  * Used to determine x, y position in board of hexagons
  */
-export class Board {
+export class GameBoard {
 
     _conf: BoardConf;
-    _board: BoardSize;
-    _boardRowCol: Map<number, Map<number, BoardHex>> = new Map();
-    _background: BackgroundPattern;
+    _boardSize: BoardSize;
+    _rowToCols: Map<number, Map<number, BoardHex>> = new Map();
+    _bckgPattern: BackgroundPattern;
 
     constructor(boardSizes: BoardSizes, conf: BoardConf) {
         this._conf = conf;
-        this._board = boardSizes[conf.size];
-        this._background = new BackgroundPattern({
+        this._boardSize = boardSizes[conf.size];
+        this._bckgPattern = new BackgroundPattern({
             face: conf.face,
             size: conf.size,
-            height: this._board.height,
-            width: this._board.width
+            height: this._boardSize.height,
+            width: this._boardSize.width
         });
     }
 
@@ -41,10 +40,10 @@ export class Board {
      * @desc Used to fill board background with background tilesets
      */
     *all(): IterableIterator<BoardHex> {
-        for (const hexagon of this._board.hexagons) {
+        for (const hexagon of this._boardSize.hexagons) {
             yield {
                 ...hexagon,
-                background: this._background.getBackground(hexagon.row, hexagon.col),
+                background: this._bckgPattern.getBackground(hexagon.row, hexagon.col),
             };
         }
 

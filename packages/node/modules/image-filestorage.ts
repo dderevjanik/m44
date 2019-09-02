@@ -2,7 +2,7 @@ import fs, { createWriteStream, WriteStream } from "fs";
 import * as log4js from "log4js";
 import path from "path";
 import http from "http";
-import { ImageStorage } from "../../core/types/imagestorage";
+import { PersistentStorage } from "../../core/types/imagestorage";
 
 const log = log4js.getLogger("IMG-REPO");
 
@@ -22,7 +22,7 @@ interface ImageRepoConf {
     imageDir: string;
 }
 
-export class ImageFileStorage implements ImageStorage<Buffer> {
+export class ImageFileStorage implements PersistentStorage<Buffer> {
 
     private _conf: ImageRepoConf;
     private _memCache: { [imageName: string]: Buffer };

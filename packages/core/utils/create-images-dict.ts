@@ -1,7 +1,7 @@
 import { SedData } from "../../shared/sed_data";
 import { replaceAt } from "./utils";
 
-export function getImagesDict(sedData: SedData) {
+export function createImagesDict(sedData: SedData) {
     const imageDict: Map<string, string> = new Map();
 
     console.log("[IMAGE-DICT] creating terrain dictionary");

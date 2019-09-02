@@ -1,7 +1,7 @@
 import { M44, M44Hex } from "../shared/m44";
-import { Board } from "./board";
+import { GameBoard } from "./board";
 import { Renderer } from "./types/renderer";
-import { IconRepo } from "./utils/icon-repo";
+import { ImageStore } from "./utils/images-repo";
 
 interface ScenarioHex {
     row: number;
@@ -30,33 +30,47 @@ interface ScenarioHex {
 
 export class Scenario {
 
-    _m44: M44;
-    _m44Board: Map<number, Map<number, M44Hex>>;
+    _m44scen: M44;
+    _rowToCols: Map<number, Map<number, M44Hex>>;
 
-    _iconRepo: IconRepo<any>;
-    _board: Board;
+    _iconRepo: ImageStore<any>;
+    _gameBoard: GameBoard;
 
-    constructor(board: Board, m44: M44, iconRepo: IconRepo<any>) {
-        this._m44 = m44;
-        this._board = board;
-        this._m44Board = new Map();
+    constructor(board: GameBoard, m44: M44, iconRepo: ImageStore<any>) {
+        this._m44scen = m44;
+        this._gameBoard = board;
+        this._rowToCols = new Map();
         this._iconRepo = iconRepo;
 
         for (const hex of m44.board.hexagons) {
-            if (this._m44Board.has(hex.row)) {
-                const colHexes = this._m44Board.get(hex.row);
+            if (this._rowToCols.has(hex.row)) {
+                const colHexes = this._rowToCols.get(hex.row);
                 colHexes!.set(hex.col, hex);
             } else {
                 const colHexes = new Map<number, M44Hex>();
                 colHexes.set(hex.col, hex);
-                this._m44Board.set(hex.row, colHexes);
+                this._rowToCols.set(hex.row, colHexes);
             }
         }
     }
 
+    size(): [number, number] {
+        return [
+            this._gameBoard._boardSize.width,
+            this._gameBoard._boardSize.height
+        ];
+    }
+
+    sizeR(): [number, number] {
+        return [
+            this._gameBoard._boardSize.rWidth,
+            this._gameBoard._boardSize.rHeight
+        ];
+    }
+
     getHex(row: number, col: number): ScenarioHex {
-        if (this._m44Board.has(row)) {
-            const colHexes = this._m44Board.get(row);
+        if (this._rowToCols.has(row)) {
+            const colHexes = this._rowToCols.get(row);
             if (colHexes && colHexes.has(col)) {
                 const hex = colHexes!.get(col);
                 if (hex) {
@@ -89,7 +103,7 @@ export class Scenario {
     }
 
     *allHexes(): IterableIterator<ScenarioHex> {
-        for (const boardHex of this._board.all()) {
+        for (const boardHex of this._gameBoard.all()) {
             const { row, col } = boardHex;
             const iRow = row;
             const iCol = col;
@@ -130,8 +144,8 @@ export class Scenario {
 
         return {
             board: {
-                face: this._m44.board.face,
-                type: this._m44.board.type
+                face: this._m44scen.board.face,
+                type: this._m44scen.board.type
             },
             stats: {
                 terrains: Array.from(terrains.values()),
@@ -147,13 +161,13 @@ export class Scenario {
     // Draw
 
     async drawBackgroundLayer(ctx: Renderer<any, any>) {
-        console.log(`[APP] Drawing board with '${this._m44.board.type}' size and with '${this._m44.board.face}' face`);
+        console.log(`[APP] Drawing board with '${this._m44scen.board.type}' size and with '${this._m44scen.board.face}' face`);
         const iconRepo = this._iconRepo;
 
         // TODO: _board._board is ugly f*ck ! boardSize
-        await ctx.resize(this._board._board.rWidth, this._board._board.rHeight);
-        for (const hexagon of this._board.all()) {
-            const background = this._board._background.getBackground(hexagon.row, Math.floor(hexagon.col / 2));
+        // await ctx.resize(this._board._board.rWidth, this._board._board.rHeight);
+        for (const hexagon of this._gameBoard.all()) {
+            const background = this._gameBoard._bckgPattern.getBackground(hexagon.row, Math.floor(hexagon.col / 2));
             const backgroundImg = await iconRepo.get(background);
             await ctx.renderImage(backgroundImg, hexagon.posX, hexagon.posY);
         }
@@ -171,7 +185,7 @@ export class Scenario {
 
         // Render Layers
         console.log("[APP] Starting rendering...");
-        for (const hexagon of this._board.all()) {
+        for (const hexagon of this._gameBoard.all()) {
             const scenarioHex = this.getHex(hexagon.row, hexagon.col);
             if (scenarioHex.data.terrain) {
                 // render terrain instead of background

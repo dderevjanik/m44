@@ -1,7 +1,8 @@
 import fs from "fs";
+import * as t from "io-ts";
 import * as reporters from "io-ts-reporters";
 
-// export function fileLoader<T extends t.Type<any>>(filePath: string, decoder: T): t.TypeOf<T> {
+// export function fileLoader<T extends t.TypeC<any>>(filePath: string, decoder: T): t.TypeOf<T> {
 export function fileLoader(filePath: string, decoder: any): any {
     if (!fs.existsSync(filePath)) {
         throw new Error(`incorrect_path: ${filePath}`);
@@ -23,8 +24,9 @@ export function fileLoader(filePath: string, decoder: any): any {
     }
 
     const result = decoder.decode(data);
-    const report = reporters.reporter(result);
-    if (report.length) {
+    // result.isLeft
+    // const report = reporters.reporter(result);
+    if (result.isLeft) {
         throw new Error(`cannot_decode: ${filePath}`);
     }
     return data;

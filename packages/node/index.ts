@@ -27,6 +27,7 @@ export class M44Node {
     async initialize(sedDataPath: string, boardSizesPath: string): Promise<void> {
         const sedData = fileLoader(sedDataPath, SedData);
         const boardSizes = fileLoader(boardSizesPath, BoardSizes);
+
         this._app = new Core<Buffer, Buffer>(
             sedData,
             boardSizes,
@@ -50,9 +51,12 @@ export class M44Node {
         const m44: M44 = fileLoader(filePath, M44);
         try  {
             // const x = await this._app.renderBoard()
+            const scenario = this._app.createScenario(m44);
+
             const ctx = new NodeCanvasRender();
             await ctx.loadFont("32px Arial");
-            const scenario = this._app.createScenario(m44);
+            await ctx.resize(...scenario.sizeR());
+
             await scenario.drawBackgroundLayer(ctx);
             await scenario.drawSceanrioLayer(ctx, {
                 renderLayers: this._conf.renderLayers

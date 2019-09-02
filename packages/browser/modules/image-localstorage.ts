@@ -1,4 +1,4 @@
-import { ImageStorage } from "../../core/types/imagestorage";
+import { PersistentStorage } from "../../core/types/imagestorage";
 
 // HACKY
 // const PROXY = 'https://cors-anywhere.herokuapp.com/';
@@ -106,7 +106,7 @@ interface Config {
     imageKey: string;
 }
 
-export class ImageLocalStorage implements ImageStorage<HTMLImageElement> {
+export class ImageLocalStorage implements PersistentStorage<HTMLImageElement> {
 
     private _conf: Config;
     private _memory: { [imageName: string]: HTMLImageElement } = {};

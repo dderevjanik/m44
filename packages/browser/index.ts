@@ -1,9 +1,7 @@
 import { SedData } from "../shared/sed_data";
 import { Core, CoreConf } from "../core/core";
 import { BrowserMeasure } from "./modules/browser-measure";
-import { CanvasRender } from "./modules/canvas-render";
 import { ImageLocalStorage } from "./modules/image-localstorage";
-import { M44 } from "../shared/m44";
 import { BoardSizes } from "../shared/board_size";
 
 // HACKY

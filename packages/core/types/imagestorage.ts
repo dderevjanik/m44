@@ -1,3 +1,3 @@
-export interface ImageStorage<IMG> {
+export interface PersistentStorage<IMG> {
     get(imageName: string): Promise<IMG>;
 }

@@ -1,14 +1,14 @@
-import { ImageStorage } from "../types/imagestorage";
+import { PersistentStorage } from "../types/imagestorage";
 
-export class IconRepo<IMG> {
+export class ImageStore<IMG> {
 
-    _imageRepo: ImageStorage<IMG>;
-    _iconDict: Map<string, string>;
+    _imageRepo: PersistentStorage<IMG>;
+    _imagesDict: Map<string, string>;
     _memCache: { [name: string]: IMG };
 
-    constructor(imageRepo: ImageStorage<IMG>, iconDict: Map<string, string>) {
+    constructor(imageRepo: PersistentStorage<IMG>, imagesDict: Map<string, string>) {
         this._imageRepo = imageRepo;
-        this._iconDict = iconDict;
+        this._imagesDict = imagesDict;
         this._memCache = { };
     }
 
@@ -16,7 +16,7 @@ export class IconRepo<IMG> {
         if (name in this._memCache) {
             return this._memCache[name];
         } else {
-            const url = this._iconDict.get(name);
+            const url = this._imagesDict.get(name);
             if (url) {
                 const img = await this._imageRepo.get(url);
 
