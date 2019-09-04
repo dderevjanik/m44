@@ -6,14 +6,10 @@ export class CanvasRender implements Renderer<HTMLImageElement, string> {
     private _ctx: CanvasRenderingContext2D;
     private _font: string | null ;
 
-    constructor() {
+    constructor(canvasEl: HTMLCanvasElement) {
         this._font = null;
-        this._canvas = document.createElement("canvas");
-        this._ctx = this._canvas.getContext("2d")!;
-
-        // TODO: DEBUG
-        const appEl = document.getElementById("app") as HTMLDivElement;
-        appEl.appendChild(this._canvas);
+        this._canvas = canvasEl;
+        this._ctx = canvasEl.getContext("2d")!;
     }
 
     async renderRect(x: number, y: number, w: number, h: number, style: string) {

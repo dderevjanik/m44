@@ -18,7 +18,7 @@ interface Config {
 export class M44Node {
 
     _conf: Config;
-    _app: Core<Buffer, Buffer> | null = null;
+    _app: Core<Buffer> | null = null;
 
     constructor(conf: Config) {
         this._conf = conf;
@@ -28,7 +28,7 @@ export class M44Node {
         const sedData = fileLoader(sedDataPath, SedData);
         const boardSizes = fileLoader(boardSizesPath, BoardSizes);
 
-        this._app = new Core<Buffer, Buffer>(
+        this._app = new Core<Buffer>(
             sedData,
             boardSizes,
             new NodeMeasure(),

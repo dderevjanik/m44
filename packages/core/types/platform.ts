@@ -1,3 +1,5 @@
+import { Measure } from "./measure";
+
 export interface PersistentStore<T> {
     get(key: string): Promise<T>;
     set(key: string): Promise<T>;
@@ -6,4 +8,5 @@ export interface PersistentStore<T> {
 
 export interface Platform {
     persistentStore: PersistentStore<any>;
+    measure: Measure;
 }

@@ -16,7 +16,7 @@ interface Config {
 
 export class M44Browser {
 
-    _app: Core<HTMLImageElement, string> | null = null;
+    _app: Core<HTMLImageElement> | null = null;
     _conf: Config;
 
     constructor(conf: Config) {
@@ -31,7 +31,7 @@ export class M44Browser {
         });
         // await imgls.sideLoad("countryside.png", PROXY + "https://raw.githubusercontent.com/patricksurry/aide-memoire/master/images/bg_188_217/countryside.png");
         // await imgls.sideLoad("outline.png", PROXY + "https://raw.githubusercontent.com/patricksurry/aide-memoire/master/images/bg_188_217/outline.png");
-        this._app = new Core<HTMLImageElement, string>(
+        this._app = new Core<HTMLImageElement>(
             sedData,
             boardSizes,
             new BrowserMeasure(),
@@ -50,6 +50,7 @@ export class M44Browser {
                 ]
             }
         );
+        await this._app.initIcons();
     }
 
     // async renderBoard(ctx: CanvasRender, size: "STANDARD" | "OVERLORD" | "BRKTHRU", face: "BEACH" | "COUNTRY" | "DESERT" | "WINTER") {

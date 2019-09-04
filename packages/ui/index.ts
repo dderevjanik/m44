@@ -7,9 +7,10 @@ import { M44 } from "../shared/m44";
 import SedDataJSON from "../../data/sed_data.json";
 import BoardSizesJSON from "../../board_sizes.json";
 import ImagesJSON from "../../images.json";
+import { CanvasRender } from "../browser/modules/canvas-render";
 
 (async () => {
-//     // Initialize HTML Elements
+    //     // Initialize HTML Elements
     const canvasEl = document.getElementById("m44-canvas") as HTMLCanvasElement;
     const m44Inp = document.getElementById("m44-scenario") as HTMLInputElement;
 
@@ -59,15 +60,27 @@ import ImagesJSON from "../../images.json";
                     localStorage.setItem("m44-scenario", JSON.stringify(scenario));
                 }
                 const scn = await m44._app!.createScenario(scenario);
+                const scenarioSize = scn.sizeR();
+                canvasEl.width = scenarioSize[0];
+                canvasEl.height = scenarioSize[1];
 
-                const ctx = canvasEl.getContext('2d');
-                if (ctx) {
-                    scn.drawBackgroundLayer(ctx as any);
-                } else {
-                    console.log('cannot initialize drawing context 2d');
-                }
-
-            } catch(err) {
+                const renderer = new CanvasRender(canvasEl);
+                await scn.drawBackgroundLayer(renderer);
+                await scn.drawSceanrioLayer(renderer, {
+                    renderLayers: [
+                        "background",
+                        "outlines",
+                        "terrain",
+                        "lines",
+                        "rect_terrain",
+                        "obstacle",
+                        "unit",
+                        "badge",
+                        "tags",
+                        "label"
+                    ]
+                });
+            } catch (err) {
                 console.log(err);
                 console.error(`[UI] Cannot parse '${file.name}' loaded from <input/>`);
             }

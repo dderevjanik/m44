@@ -5,7 +5,7 @@ import log4js from "log4js";
 import * as reporters from "io-ts-reporters";
 import { readFileSync } from "fs";
 import { SedData } from "../shared/sed_data";
-import { getImagesDict } from "../core/utils/get-images-dict";
+import { createImagesDict } from "../core/utils/create-images-dict";
 
 const config = {
     log4js: {
@@ -52,7 +52,7 @@ log.info(conf);
         throw new Error(`cannot_decode: sedData '${conf._[0]}'`);
     }
 
-    const iconDict = getImagesDict(sedData);
+    const iconDict = createImagesDict(sedData);
     const iconDictObj: { [image: string]: string } = {};
     iconDict.forEach((val, key) => {
         iconDictObj[key] = val;

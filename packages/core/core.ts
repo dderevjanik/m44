@@ -45,7 +45,7 @@ export interface CoreConf {
     }
 }
 
-export class Core<IMG, RES> {
+export class Core<IMG> {
 
     _imageRepo: PersistentStorage<IMG>;
     _sedData: SedData;
@@ -71,7 +71,6 @@ export class Core<IMG, RES> {
     }
 
     createScenario(m44: M44) {
-        const boardSize: BoardSize = this._boardSizes[m44.board.type];
         const board = new GameBoard(this._boardSizes, {
             face: m44.board.face,
             size: m44.board.type
