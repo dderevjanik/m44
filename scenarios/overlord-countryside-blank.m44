@@ -1,0 +1,37 @@
+{
+	"meta_data": {
+		"status": "PRIVATE",
+		"software": "sed 1.2"
+	},
+	"game_info": {
+		"date_begin": "1944-06-06",
+		"front": "WESTERN",
+		"type": "HISTORICAL",
+		"starting": "PLAYER1",
+		"side_player1": "AXIS",
+		"side_player2": "ALLIES",
+		"country_player1": "DE",
+		"country_player2": "US",
+		"cards_player1": 4,
+		"cards_player2": 4,
+		"victory_player1": 4,
+		"victory_player2": 4
+	},
+	"board": {
+		"type": "OVERLORD",
+		"face": "COUNTRY",
+		"hexagons": [],
+		"labels": []
+	},
+	"packs": {},
+	"text": {
+		"en": {
+			"name": "My title",
+			"subtitle": "\t\t\t",
+			"description": "My description",
+			"rules": "My rules",
+			"historical": "My historical background",
+			"victory": "My victory conditions"
+		}
+	}
+}

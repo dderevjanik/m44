@@ -37,7 +37,9 @@ export const EStartingPlayer = t.union([
 export const EBoardType = t.union([
     t.literal("STANDARD"),
     t.literal("OVERLORD"),
-    t.literal("BRKTHRU")
+    t.literal("BRKTHRU"),
+    // ext
+    t.literal("SMALL")
 ]);
 
 export const EArmy = t.union([

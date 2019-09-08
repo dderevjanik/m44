@@ -58,7 +58,7 @@ const WINTER: Array<[string, string]> = [
 ];
 
 interface Config {
-    size: "STANDARD" | "OVERLORD" | "BRKTHRU";
+    size: "STANDARD" | "OVERLORD" | "BRKTHRU" | "SMALL";
     face: "WINTER" | "BEACH" | "COUNTRY" | "DESERT";
     width: number;
     height: number;

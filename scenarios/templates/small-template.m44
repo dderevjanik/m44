@@ -1,0 +1,294 @@
+{
+	"meta_data": {
+		"status": "PRIVATE",
+		"software": "sed 1.2"
+	},
+	"game_info": {
+		"date_begin": "1944-06-06",
+		"front": "WESTERN",
+		"type": "HISTORICAL",
+		"starting": "PLAYER1",
+		"side_player1": "AXIS",
+		"side_player2": "ALLIES",
+		"country_player1": "DE",
+		"country_player2": "US",
+		"cards_player1": 4,
+		"cards_player2": 4,
+		"victory_player1": 4,
+		"victory_player2": 4
+	},
+	"board": {
+		"type": "STANDARD",
+		"face": "COUNTRY",
+		"hexagons": [
+			{
+				"row": 0,
+				"col": 0,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 2,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 4,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 6,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 8,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 10,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 12,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 14,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 16,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 18,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 20,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 22,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 0,
+				"col": 24,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 2,
+				"col": 0,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 2,
+				"col": 24,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 4,
+				"col": 0,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 4,
+				"col": 24,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 6,
+				"col": 0,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 6,
+				"col": 24,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 0,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 2,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 4,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 6,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 8,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 10,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 12,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 14,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 16,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 18,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 20,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 22,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			},
+			{
+				"row": 8,
+				"col": 24,
+				"obstacle": {
+					"name": "wire",
+					"orientation": 1
+				}
+			}
+		],
+		"labels": []
+	},
+	"packs": {},
+	"text": {
+		"en": {
+			"name": "My title",
+			"subtitle": "\t\t\t",
+			"description": "My description",
+			"rules": "My rules",
+			"historical": "My historical background",
+			"victory": "My victory conditions"
+		}
+	}
+}

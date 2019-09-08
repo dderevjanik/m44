@@ -26,7 +26,9 @@ export type BoardSize = t.TypeOf<typeof BoardSize>;
 export const BoardSizes = t.interface({
     STANDARD: BoardSize,
     OVERLORD: BoardSize,
-    BRKTHRU: BoardSize
+    BRKTHRU: BoardSize,
+    // ext
+    SMALL: BoardSize
 });
 
 export type BoardSizes = t.TypeOf<typeof BoardSizes>;

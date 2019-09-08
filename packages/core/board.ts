@@ -2,7 +2,7 @@ import { BoardSizes, BoardSize } from "../shared/board_size";
 import { BackgroundPattern } from "./background-pattern";
 
 export interface BoardConf {
-    size: "STANDARD" | "OVERLORD" | "BRKTHRU";
+    size: "STANDARD" | "OVERLORD" | "BRKTHRU" | "SMALL";
     face: "WINTER" | "BEACH" | "COUNTRY" | "DESERT";
 }
 
