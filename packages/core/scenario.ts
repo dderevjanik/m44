@@ -167,8 +167,7 @@ export class Scenario {
         // TODO: _board._board is ugly f*ck ! boardSize
         // await ctx.resize(this._board._board.rWidth, this._board._board.rHeight);
         for (const hexagon of this._gameBoard.all()) {
-            const background = this._gameBoard._bckgPattern.getBackground(hexagon.row, Math.floor(hexagon.col / 2));
-            const backgroundImg = await iconRepo.get(background);
+            const backgroundImg = await iconRepo.get(hexagon.background);
             await ctx.renderImage(backgroundImg, hexagon.posX, hexagon.posY);
         }
     }
@@ -181,6 +180,18 @@ export class Scenario {
         if (iconRepo === undefined) {
             console.error("[APP] initIcons() not initialized");
             throw new Error("init_iconss_not_initialized");
+        }
+
+        if (conf.renderLayers.includes("lines")) {
+            console.log("[APP] Drawing lines");
+            for (const line of this._gameBoard._boardSize.lines) {
+                await ctx.renderDashedLine(line[0], line[1], line[2], line[3], {
+                    length: 12,
+                    step: 8,
+                    width: 4,
+                    style: "rgba(178, 34, 34, 0.8)"
+                });
+            }
         }
 
         // Render Layers
@@ -209,23 +220,14 @@ export class Scenario {
                         await ctx.renderImage(badgeImg, hexagon.posX, hexagon.posY);
                     }
                 }
-                // if (hex.data.tags && this._conf.renderLayers.includes("tags")) {
-                //     const tagsImg = await iconRepo.get(hex.data.tags.name);
-                //     await renderer.renderImage(tagsImg, hex.posX, hex.posY);
-                // }
+                if (scenarioHex.data.tags && conf.renderLayers.includes("tags")) {
+                    for (const tag of scenarioHex.data.tags) {
+                        const tagsImg = await iconRepo.get(tag.name);
+                        await ctx.renderImage(tagsImg, hexagon.posX, hexagon.posY);
+                    }
+                }
             }
         }
-        // if (this._conf.renderLayers.includes("lines")) {
-        //     console.log("[APP] Drawing lines");
-        //     for (const line of this.boardSize.lines) {
-        //         await ctx.renderDashedLine(line[0], line[1], line[2], line[3], {
-        //             length: 12,
-        //             step: 8,
-        //             width: 4,
-        //             style: "rgba(178, 34, 34, 0.8)"
-        //         });
-        //     }
-        // }
 
         // console.log(`[APP] scenario rendered successfully in ${this._measure.end()}ms`);
     }

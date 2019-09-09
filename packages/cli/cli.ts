@@ -86,7 +86,6 @@ function getFileName(filePath: string) {
     }
 
     const m44Node = new M44Node({
-        board: conf.board,
         dataUrl: conf.imageRepo.dataUrl,
         imageDir: conf.imageRepo.imageDir,
         renderLayers: renderLayers

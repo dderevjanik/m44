@@ -3,55 +3,17 @@ import { SedData } from "../shared/sed_data";
 import { M44 } from "../shared/m44";
 import { GameBoard } from "./board";
 import { ImageStore } from "./utils/images-repo";
-import { Measure } from "./types/measure";
-import { Renderer } from "./types/renderer";
 import { Scenario } from "./scenario";
-import { BackgroundPattern } from "./background-pattern";
 import { backgroundIcons } from "./types/icons";
-import { BoardSizes, BoardSize } from "../shared/board_size";
+import { BoardSizes } from "../shared/board_size";
 import { createImagesDict } from "./utils/create-images-dict";
 
-export interface CoreConf {
-    renderLayers: string[]
-    board: {
-        hex_size: [number, number];
-        unitTL: [number, number];
-        tag_offset: [number, number];
-        badge_size: [number, number];
-        background_color: [number, number, number],
-        border_color: [number, number, number],
-        border_width: number,
-        margin: [number, number, number, number],
-        dash_color: [number, number, number],
-        dash_length: [number, number],
-        dash_width: number,
-        board_sizes: {
-            standartd: [number, number],
-            overlord: [number, number],
-            brkthru: [number, number]
-        },
-        layers: [
-            "background",
-            "outlines",
-            "terrain",
-            "lines",
-            "rect_terrain",
-            "obstacle",
-            "unit",
-            "badge",
-            "tags",
-            "label"
-        ]
-    }
-}
 
 export class Core<IMG> {
 
     _imageRepo: PersistentStorage<IMG>;
     _sedData: SedData;
     _boardSizes: BoardSizes;
-    _measure: Measure;
-    _conf: CoreConf;
 
     // @ts-ignore
     _iconRepo: ImageStore<IMG>;
@@ -59,15 +21,11 @@ export class Core<IMG> {
     constructor(
         sedData: SedData,
         boardSizes: BoardSizes,
-        measure: Measure,
         imageRepo: PersistentStorage<IMG>,
-        conf: CoreConf
     ) {
         this._sedData = sedData;
         this._boardSizes = boardSizes;
-        this._measure = measure;
         this._imageRepo = imageRepo;
-        this._conf = conf;
     }
 
     createScenario(m44: M44) {

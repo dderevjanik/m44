@@ -1,6 +1,4 @@
 import fs from "fs";
-import * as t from "io-ts";
-import * as reporters from "io-ts-reporters";
 
 // export function fileLoader<T extends t.TypeC<any>>(filePath: string, decoder: T): t.TypeOf<T> {
 export function fileLoader(filePath: string, decoder: any): any {

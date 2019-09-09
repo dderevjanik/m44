@@ -2,6 +2,7 @@ import * as reporters from "io-ts-reporters";
 import { M44Browser } from "../browser/index";
 import { config } from "./config";
 import { M44 } from "../shared/m44";
+import { AppLogic } from "./app-logic";
 
 // json
 import SedDataJSON from "../../data/sed_data.json";
@@ -10,19 +11,8 @@ import ImagesJSON from "../../images.json";
 import { CanvasRender } from "../browser/modules/canvas-render";
 
 (async () => {
-    //     // Initialize HTML Elements
-    const canvasEl = document.getElementById("m44-canvas") as HTMLCanvasElement;
-    const m44Inp = document.getElementById("m44-scenario") as HTMLInputElement;
-
-    if (canvasEl === null) {
-        throw new Error("m44-canvas <canvas/> is missing!");
-    }
-    if (m44Inp === null) {
-        throw new Error("m44-scenario <input/> is missing!");
-    }
-
+    const appLogic = new AppLogic();
     const m44 = new M44Browser({
-        board: config.board,
         dataUrl: config.imageRepo.dataUrl,
         imageKey: config.imageRepo.imageDir,
         renderLayers: [
@@ -39,6 +29,21 @@ import { CanvasRender } from "../browser/modules/canvas-render";
     });
     // @ts-ignore
     m44.initialize(SedDataJSON, BoardSizesJSON, ImagesJSON);
+
+    //     // Initialize HTML Elements
+    const canvasBackgrundEl = document.getElementById("layer-background") as HTMLCanvasElement;
+    const canvasScenarioEl = document.getElementById("layer-scenario") as HTMLCanvasElement;
+    const canvasUIEl = document.getElementById("layer-ui") as HTMLCanvasElement;
+
+
+    const m44Inp = document.getElementById("m44-scenario") as HTMLInputElement;
+
+    if (canvasBackgrundEl === null || canvasScenarioEl === null || canvasUIEl === null) {
+        throw new Error("One of <canvas/> is missing!");
+    }
+    if (m44Inp === null) {
+        throw new Error("m44-scenario <input/> is missing!");
+    }
 
     m44Inp.addEventListener("change", (e) => {
         console.log("[UI] Loading scenario from <input/>");
@@ -57,29 +62,30 @@ import { CanvasRender } from "../browser/modules/canvas-render";
                 if (report.length) {
                     console.error(`[UI] ${report}`);
                 } else {
-                    localStorage.setItem("m44-scenario", JSON.stringify(scenario));
+                    // localStorage.setItem("m44-scenario", JSON.stringify(scenario));
                 }
                 const scn = await m44._app!.createScenario(scenario);
                 const scenarioSize = scn.sizeR();
-                canvasEl.width = scenarioSize[0];
-                canvasEl.height = scenarioSize[1];
 
-                const renderer = new CanvasRender(canvasEl);
-                await scn.drawBackgroundLayer(renderer);
-                await scn.drawSceanrioLayer(renderer, {
-                    renderLayers: [
-                        "background",
-                        "outlines",
-                        "terrain",
-                        "lines",
-                        "rect_terrain",
-                        "obstacle",
-                        "unit",
-                        "badge",
-                        "tags",
-                        "label"
-                    ]
-                });
+                canvasBackgrundEl.width = scenarioSize[0];
+                canvasBackgrundEl.height = scenarioSize[1];
+
+                canvasScenarioEl.width = scenarioSize[0];
+                canvasScenarioEl.height = scenarioSize[1];
+
+                canvasUIEl.width = scenarioSize[0];
+                canvasUIEl.height = scenarioSize[1];
+
+                const backgroundRenderer = new CanvasRender(canvasBackgrundEl);
+                const scenarioRenderer = new CanvasRender(canvasScenarioEl);
+                const UIRenderer = new CanvasRender(canvasUIEl);
+
+                appLogic.setBackgroundRender(backgroundRenderer);
+                appLogic.setScenarioRenderer(scenarioRenderer);
+                appLogic.setUIRenderer(UIRenderer);
+
+                appLogic.loadScenario(scn);
+                appLogic.start();
             } catch (err) {
                 console.log(err);
                 console.error(`[UI] Cannot parse '${file.name}' loaded from <input/>`);

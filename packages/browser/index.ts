@@ -1,6 +1,5 @@
 import { SedData } from "../shared/sed_data";
-import { Core, CoreConf } from "../core/core";
-import { BrowserMeasure } from "./modules/browser-measure";
+import { Core } from "../core/core";
 import { ImageLocalStorage } from "./modules/image-localstorage";
 import { BoardSizes } from "../shared/board_size";
 
@@ -9,7 +8,6 @@ import { BoardSizes } from "../shared/board_size";
 
 interface Config {
     renderLayers: string[];
-    board: CoreConf["board"];
     dataUrl: string;
     imageKey: string;
 }
@@ -34,21 +32,7 @@ export class M44Browser {
         this._app = new Core<HTMLImageElement>(
             sedData,
             boardSizes,
-            new BrowserMeasure(),
-            imgls,
-            {
-                board: this._conf.board,
-                renderLayers: [
-                    "background",
-                    "terrain",
-                    "rect_terrain",
-                    "obstacle",
-                    "unit",
-                    "badge",
-                    "tags",
-                    "label"
-                ]
-            }
+            imgls
         );
         await this._app.initIcons();
     }

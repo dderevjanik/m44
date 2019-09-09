@@ -120,15 +120,15 @@ export class ImageLocalStorage implements PersistentStorage<HTMLImageElement> {
         this._memory = {};
         this._canvas = document.createElement("canvas");
 
-        const storage = localStorage.getItem(conf.imageKey);
-        if (storage === undefined || storage === null) {
-            // initialize storage
-            console.log(`[IMGREPO] initializing storage "${conf.imageKey}"`);
-            localStorage.setItem(conf.imageKey, "{}");
-        } else {
-            console.log(`[IMGREPO] cache loaded from storage "${conf.imageKey}"`);
-            this._cache = JSON.parse(storage);
-        }
+        // const storage = localStorage.getItem(conf.imageKey);
+        // if (storage === undefined || storage === null) {
+        //     // initialize storage
+        //     console.log(`[IMGREPO] initializing storage "${conf.imageKey}"`);
+        //     localStorage.setItem(conf.imageKey, "{}");
+        // } else {
+        //     console.log(`[IMGREPO] cache loaded from storage "${conf.imageKey}"`);
+        //     this._cache = JSON.parse(storage);
+        // }
     }
 
     async sideLoad(imageName: string, url: string) {

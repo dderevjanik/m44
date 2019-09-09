@@ -1,5 +1,3 @@
-import { CoreConf } from "../core/core";
-
 export const config = {
     imageRepo: {
         // dataUrl: "http://static.daysofwonder.com/memoir44/sed_images/",
@@ -35,5 +33,5 @@ export const config = {
             "tags",
             "label"
         ]
-    } as CoreConf["board"]
+    }
 };
