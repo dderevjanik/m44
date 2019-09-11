@@ -37,38 +37,35 @@ export class ImageFileStorage implements PersistentStorage<Buffer> {
         }
     }
 
-    async get(imageName: string): Promise<Buffer> {
+    async get(imagePath: string): Promise<Buffer> {
         const { imageDir } = this._conf;
-        const fileName = imageName.split("/").pop();
-        if (!fileName) {
-            throw new Error(`Cannot parse filename from "${imageName}"`)
-        }
-        const filePath = path.join(imageDir, fileName);
-        if (imageName in this._memCache) {
-            return this._memCache[imageName];
-        } else if (fs.existsSync(filePath)) {
-            const image = fs.readFileSync(filePath);
-            this._memCache[imageName] = image;
+
+        const finalImagePath = path.join(imageDir, imagePath);
+        if (imagePath in this._memCache) {
+            return this._memCache[imagePath];
+        } else if (fs.existsSync(finalImagePath)) {
+            const image = fs.readFileSync(finalImagePath);
+            this._memCache[imagePath] = image;
             return image;
         } else {
-            await this._fetch(imageName);
-            const image = fs.readFileSync(filePath);
-            this._memCache[imageName] = image;
+            await this._fetch(imagePath);
+            const image = fs.readFileSync(finalImagePath);
+            this._memCache[imagePath] = image;
             return image;
         }
     }
 
-    async _fetch(imageName: string): Promise<void> {
+    async _fetch(imagePath: string): Promise<void> {
         const { dataUrl, imageDir } = this._conf;
+        const finalDir = path.join(imageDir, path.dirname(imagePath));
+        fs.mkdirSync(finalDir, { recursive: true });
+        const ws = createWriteStream(path.join(imageDir, imagePath));
 
-        const fileName = imageName.split("/").pop();
-        const ws = createWriteStream(path.join(imageDir, fileName!));
-
-        const url = dataUrl + imageName;
+        const url = dataUrl + imagePath;
         try {
             await fetchFile(url, ws);
         } catch(err) {
-            log.error(`Cannot fetch "${imageName}", ${err}`);
+            log.error(`Cannot fetch "${imagePath}", ${err}`);
             throw new Error("cannot_fetch");
         }
         log.info(`fetched ${url}`);

@@ -7,6 +7,7 @@ import { Scenario } from "./scenario";
 import { backgroundIcons } from "./types/icons";
 import { BoardSizes } from "../shared/board_size";
 import { createImagesDict } from "./utils/create-images-dict";
+import { defaultSceanrio } from "./default-scenario";
 
 
 export class Core<IMG> {
@@ -28,7 +29,7 @@ export class Core<IMG> {
         this._imageRepo = imageRepo;
     }
 
-    createScenario(m44: M44) {
+    createScenario(m44: M44 = defaultSceanrio) {
         const board = new GameBoard(this._boardSizes, {
             face: m44.board.face,
             size: m44.board.type

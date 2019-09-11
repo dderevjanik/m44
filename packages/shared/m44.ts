@@ -98,26 +98,26 @@ export const M44 = t.strict({
         victory_player2: t.number
     }),
     board: M44Board,
-    packs: t.strict({
-        base: t.union([t.undefined, t.number]),
-        terrain: t.union([t.undefined, t.number]),
-        eastern: t.union([t.undefined, t.number]),
-        pacific: t.union([t.undefined, t.number]),
-        air: t.union([t.undefined, t.number]),
-        mediterranean: t.union([t.undefined, t.number]),
-        battlemap: t.union([t.undefined, t.number]),
-        campaign: t.union([t.undefined, t.number]),
-        winterwars: t.union([t.undefined, t.number])
+    packs: t.partial({
+        base: t.number,
+        terrain: t.number,
+        eastern: t.number,
+        pacific: t.number,
+        air: t.number,
+        mediterranean: t.number,
+        battlemap: t.number,
+        campaign: t.number,
+        winterwars: t.number
     }),
     text: t.strict({
-        en: t.strict({
+        en: t.partial({
             name: t.string,
             subtitle: t.string,
             description: t.string,
             rules: t.string,
             historical: t.string,
             victory: t.string,
-            bibliography: t.union([t.undefined, t.string])
+            bibliography: t.string
         })
     })
 });

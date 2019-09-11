@@ -31,7 +31,7 @@ interface ScenarioHex {
 export class Scenario {
 
     _m44scen: M44;
-    _rowToCols: Map<number, Map<number, M44Hex>>;
+    _scenariosHexMap: Map<number, Map<number, M44Hex>>;
 
     _iconRepo: ImageStore<any>;
     _gameBoard: GameBoard;
@@ -39,17 +39,17 @@ export class Scenario {
     constructor(board: GameBoard, m44: M44, iconRepo: ImageStore<any>) {
         this._m44scen = m44;
         this._gameBoard = board;
-        this._rowToCols = new Map();
+        this._scenariosHexMap = new Map();
         this._iconRepo = iconRepo;
 
         for (const hex of m44.board.hexagons) {
-            if (this._rowToCols.has(hex.row)) {
-                const colHexes = this._rowToCols.get(hex.row);
+            if (this._scenariosHexMap.has(hex.row)) {
+                const colHexes = this._scenariosHexMap.get(hex.row);
                 colHexes!.set(hex.col, hex);
             } else {
                 const colHexes = new Map<number, M44Hex>();
                 colHexes.set(hex.col, hex);
-                this._rowToCols.set(hex.row, colHexes);
+                this._scenariosHexMap.set(hex.row, colHexes);
             }
         }
     }
@@ -69,8 +69,8 @@ export class Scenario {
     }
 
     getHex(row: number, col: number): ScenarioHex {
-        if (this._rowToCols.has(row)) {
-            const colHexes = this._rowToCols.get(row);
+        if (this._scenariosHexMap.has(row)) {
+            const colHexes = this._scenariosHexMap.get(row);
             if (colHexes && colHexes.has(col)) {
                 const hex = colHexes!.get(col);
                 if (hex) {

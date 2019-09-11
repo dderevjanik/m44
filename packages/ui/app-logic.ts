@@ -32,9 +32,7 @@ export class AppLogic {
             shouldUpdateBckg: true,
             shouldUpdateScn: true
         },
-        renderers: {
-
-        }
+        renderers: { }
     };
 
     loadScenario(scenario: Scenario): void {
@@ -60,12 +58,12 @@ export class AppLogic {
         this.state.renderers.background = renderer;
     }
 
-    setScenarioRenderer(render: Renderer<any, any>) {
-        this.state.renderers.scenario = render;
+    setScenarioRenderer(renderer: Renderer<any, any>) {
+        this.state.renderers.scenario = renderer;
     }
 
-    setUIRenderer(render: Renderer<any, any>) {
-        this.state.renderers.ui = render;
+    setUIRenderer(renderer: Renderer<any, any>) {
+        this.state.renderers.ui = renderer;
     }
 
     start(): void {
