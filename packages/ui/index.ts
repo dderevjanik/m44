@@ -86,6 +86,17 @@ import { CanvasRender } from "../browser/modules/canvas-render";
 
                 appLogic.loadScenario(scn);
                 appLogic.start();
+
+                canvasUIEl.addEventListener("click", (e) => {
+                    const rect = canvasUIEl.getBoundingClientRect();
+                    const scaleX = canvasUIEl.width / rect.width;
+                    const scaleY = canvasUIEl.height / rect.height;
+                    appLogic.processEvent({
+                        type: "CLICK",
+                        x: (e.clientX - rect.left) * scaleX,
+                        y: (e.clientY - rect.top) * scaleY
+                    });
+                });
             } catch (err) {
                 console.log(err);
                 console.error(`[UI] Cannot parse '${file.name}' loaded from <input/>`);

@@ -12,6 +12,10 @@ export class CanvasRender implements Renderer<HTMLImageElement, string> {
         this._ctx = canvasEl.getContext("2d")!;
     }
 
+    async clear() {
+        this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    }
+
     async renderRect(x: number, y: number, w: number, h: number, style: string) {
         this._ctx.fillStyle = style;
         this._ctx.fillRect(x, y, w, h);

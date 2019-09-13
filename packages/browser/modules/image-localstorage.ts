@@ -1,4 +1,5 @@
 import { PersistentStorage } from "../../core/types/imagestorage";
+import { createImage } from "../utils";
 
 // HACKY
 // const PROXY = 'https://cors-anywhere.herokuapp.com/';
@@ -84,20 +85,6 @@ function createImageFromBase64(base64: string): Promise<HTMLImageElement> {
             reject(err);
         }
         image.src = base64;
-    });
-}
-
-function createImage(url: string): Promise<HTMLImageElement> {
-    const image = new Image();
-    return new Promise((resolve, reject) => {
-        image.crossOrigin = 'Anonymous'
-        image.onload = () => {
-            resolve(image);
-        }
-        image.onerror = (err) => {
-            reject(err);
-        }
-        image.src = url;
     });
 }
 

@@ -19,6 +19,7 @@ export class ClickDetection {
     _hexagons: CachedBoardHex[] = [];
 
     recalculate(hexagons: Hex[]): void {
+        // TODO: Maybe cache ?
         this._hexagons = hexagons.map((hexagon) => ({
             cx: hexagon.posX + (HEX_WIDTH / 2),
             cy: hexagon.posY + (HEX_HEIGHT / 2),
@@ -31,8 +32,8 @@ export class ClickDetection {
         // TODO: check click boundries
         const inRange: Array<[number, Hex]> = [];
         this._hexagons.forEach((hex) => {
-            const dx = Math.abs(hex.cx - x);
-            const dy = Math.abs(hex.cy - y);
+            const dx = hex.cx - x;
+            const dy = hex.cy - y;
             const distance = Math.sqrt(dx**2 + dy**2);
             if (distance < hexSize) {
                 inRange.push([distance, hex.hexagon]);

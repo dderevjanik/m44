@@ -1,6 +1,7 @@
 import { Scenario } from "../core/scenario";
 import { Renderer } from "../core/types/renderer";
 import { ClickDetection } from "./utils";
+import { createImage } from "../browser/utils";
 
 type EVENT = {
     type: 'CLICK'; x: number; y: number;
@@ -13,6 +14,7 @@ interface AppState {
         focusedHex?: { posX: number; posY: number; };
         shouldUpdateBckg: boolean;
         shouldUpdateScn: boolean;
+        shouldUpdateUI: boolean;
     };
     renderers: {
         background?: Renderer<any, any>;
@@ -30,7 +32,8 @@ export class AppLogic {
         editor: {
             focusedHex: undefined,
             shouldUpdateBckg: true,
-            shouldUpdateScn: true
+            shouldUpdateScn: true,
+            shouldUpdateUI: true
         },
         renderers: { }
     };
@@ -45,6 +48,7 @@ export class AppLogic {
         } else {
             const clickDetection = new ClickDetection();
             clickDetection.recalculate(scenario._gameBoard._boardSize.hexagons);
+            this.state.clickDetection = clickDetection;
         }
         this.state.editor = {
             ...this.state.editor,
@@ -71,11 +75,15 @@ export class AppLogic {
     }
 
     processEvent(event: EVENT) {
+        console.log(`[APP-LOGIC] EVENT:${event.type}\n${JSON.stringify(event, null, 2)}`);
         switch(event.type) {
             case "CLICK": {
                 if (this.state.clickDetection) {
                     const hex = this.state.clickDetection.detectClick(event.x, event.y);
-                    this.state.editor.focusedHex = hex;
+                    if (hex) {
+                        this.state.editor.focusedHex = hex;
+                        this.state.editor.shouldUpdateUI = true;
+                    }
                 }
                 break;
             }
@@ -89,10 +97,12 @@ export class AppLogic {
         if (this.state.renderers.background && this.state.renderers.scenario) {
             if (this.state.scenario) {
                 if (this.state.editor.shouldUpdateBckg) {
+                    this.state.renderers.background!.clear();
                     this.state.scenario.drawBackgroundLayer(this.state.renderers.background);
                     this.state.editor.shouldUpdateBckg = false;
                 }
                 if (this.state.editor.shouldUpdateScn) {
+                    this.state.renderers.scenario!.clear();
                     this.state.scenario.drawSceanrioLayer(this.state.renderers.scenario, {
                         renderLayers: [
                             "background",
@@ -108,6 +118,15 @@ export class AppLogic {
                         ]
                     });
                     this.state.editor.shouldUpdateScn = false;
+                }
+                if (this.state.editor.shouldUpdateUI) {
+                    this.state.renderers.ui!.clear();
+                    const focusedHex = this.state.editor.focusedHex;
+                    if (focusedHex) {
+                        const img = await createImage("images/moving.png");
+                        this.state.renderers.ui!.renderImage(img, focusedHex.posX, focusedHex.posY);
+                    }
+                    this.state.editor.shouldUpdateUI = false;
                 }
             } else {
                 throw new Error("No scenario to render, please load Scenario");

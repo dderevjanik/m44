@@ -55,6 +55,9 @@ console.log(conf);
 
     const imagesDictFile = fs.readFileSync(conf.i!);
     const imagesDict: { [imgName: string]: string } = JSON.parse(imagesDictFile.toString());
+
+    let i = 1;
+    const errors: string[] = [];
     for (const [imageName, imagePath] of Object.entries(imagesDict)) {
         const finalOutDir = path.join(outputDir, path.dirname(imagePath));
 
@@ -62,13 +65,21 @@ console.log(conf);
             fs.mkdirSync(finalOutDir);
         }
 
-        console.log(`Downloading [${imageName}] ${conf.u}${imagePath}`);
-
+        console.log(`Downloading ${i}. [${imageName}] ${conf.u}${imagePath}`);
         try {
             const writeStream = fs.createWriteStream(path.join(outputDir, imagePath), { flags: 'w' });
             await fetchFile(conf.u + imagePath, writeStream);
         } catch(err) {
-            console.error(`\t[ERROR] while downloading ${err}`);
+            console.error(`\t[ERROR] while downloading "${imageName}"`);
+            errors.push(imageName);
         }
+        i++;
     }
+    if (errors.length) {
+        console.log("Download completed with errors");
+        console.log("List of images NOT being able to donwload:");
+        console.log(errors.join('\n'));
+        process.exit(1);
+    }
+    console.log("Download completed");
 })();
