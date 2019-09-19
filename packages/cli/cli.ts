@@ -17,10 +17,8 @@ if (conf.h || conf.help || conf._.length === 0) {
     process.stdout.write("Usage: m44 [OPTION]... FILE...\n");
     process.stdout.write("Render .m44 FILE to .png\n");
     process.stdout.write("By default, rendered file will be written alongside with input FILE, unless -o (output) is specified\n");
-    process.stdout.write("Also, make sure that sed_data.json is in folder alongside with .m44 file, otherwise define path for it using -d arg");
     process.stdout.write("\n");
     process.stdout.write("Mandatory arguments to long options are mandatory for short options too\n");
-    process.stdout.write("\t-d\t\t\t path to sed_data.json\n");
     process.stdout.write("\t-o\t\t\t set output path for rendered .png file\n");
     process.stdout.write("\t-g\t\t\t use glob patter for input files. You must also include -o output folder");
     process.stdout.write("\t-l\t\t\t render only specific layers\n");
@@ -37,8 +35,6 @@ function getFileName(filePath: string) {
 (async function () {
     // obtain data from xargs
     const inputPath = conf._[0];
-    const sedDataPath = conf.d || path.join(path.dirname(inputPath), "/", "sed_data.json");
-    const boardSizesPath = "./board_sizes.json"; // TODO: FIX
 
     const renderLayers = conf.l
         ? conf.l.split(",").map(layer => layer.trim())
@@ -53,12 +49,6 @@ function getFileName(filePath: string) {
     if (!fs.existsSync(inputPath)) {
         log.error(`Input file "${inputPath}" doesn't exists`);
         log.warn("please make sure that input path is correct");
-        process.exit(1);
-    }
-
-    if (!fs.existsSync(sedDataPath)) {
-        log.error("Cannot find sedData.json");
-        log.warn("please change your cwd to match sedData.json or define path to it using '-d' option");
         process.exit(1);
     }
 
@@ -86,12 +76,11 @@ function getFileName(filePath: string) {
     }
 
     const m44Node = new M44Node({
-        dataUrl: conf.imageRepo.dataUrl,
-        imageDir: conf.imageRepo.imageDir,
+        imageDir: path.join(process.cwd(), conf.imageRepo.imageDir),
         renderLayers: renderLayers
     });
     try {
-        await m44Node.initialize(sedDataPath, boardSizesPath);
+        await m44Node.initialize();
     } catch(err) {
         throw new Error(`Cannot initialize m44: ${err}`);
     }

@@ -17,11 +17,6 @@ export class NodeCanvasRender implements Renderer<Buffer, Buffer> {
         this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
     }
 
-    async renderRect(x: number, y: number, w: number, h: number, style: string) {
-        this._ctx.fillStyle = style;
-        this._ctx.fillRect(x, y, w, h);
-    }
-
     async renderDashedLine(x1: number, y1: number, x2: number, y2: number, opts: { width: number, step: number, length: number, style: string }) {
         this._ctx.strokeStyle = opts.style;
         this._ctx.lineWidth = opts.width;

@@ -1,4 +1,4 @@
-import { PersistentStorage } from "../../core/types/imagestorage";
+import { ImageStorage } from "../../core/types/imagestorage";
 import { createImage } from "../utils";
 
 // HACKY
@@ -93,7 +93,7 @@ interface Config {
     imageKey: string;
 }
 
-export class ImageLocalStorage implements PersistentStorage<HTMLImageElement> {
+export class ImageLocalStorage implements ImageStorage<HTMLImageElement> {
 
     private _conf: Config;
     private _memory: { [imageName: string]: HTMLImageElement } = {};

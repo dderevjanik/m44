@@ -1,6 +1,6 @@
 {
     "SMALL": {
-        "value": "standard",
+        "value": "small",
         "nbrCols": 25,
         "nbrRows": 9,
         "width": 817,
@@ -8,7 +8,7 @@
         "rWidth": 2570,
         "rHeight": 1737,
         "access": "",
-        "label": "Standard",
+        "label": "Small",
         "lines": [
             [
                 761.2,

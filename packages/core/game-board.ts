@@ -95,14 +95,13 @@ export class GameBoard {
                         : BEACH;
     }
 
+    /**
+     * Get background for specific hex
+     */
     getBackground(row: number, col: number): string {
         const r = row % this._pattern.length;
         const c = Math.floor(col / this._pattern[0].length) % this._pattern[0].length;
         return this._pattern[r][c];
-    }
-
-    getBoardHexagons() {
-        return this._boardSize.hexagons;
     }
 
     /**

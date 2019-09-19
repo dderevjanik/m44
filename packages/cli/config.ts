@@ -12,7 +12,7 @@ export const config = {
     } as log4js.Configuration,
     imageRepo: {
         dataUrl: "http://static.daysofwonder.com/memoir44/sed_images/",
-        imageDir: "./temp"
+        imageDir: "./images"
     },
     board: {
         hex_size: [188, 217],
@@ -50,7 +50,6 @@ export type Config = (typeof config) & {
     _: string[];
     help?: boolean;
     h?: boolean;
-    g?: string; // glob
     d?: string;
     o?: string; // output path
     output?: string;

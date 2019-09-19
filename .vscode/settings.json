@@ -3,5 +3,6 @@
         "**/node_modules": true,
         "**/bower_components": true,
         "**/build": true
-    }
+    },
+    "typescript.referencesCodeLens.enabled": true
 }

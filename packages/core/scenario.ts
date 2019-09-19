@@ -1,7 +1,14 @@
 import { M44, M44Hex } from "../shared/m44";
-import { GameBoard } from "./board";
+import { GameBoard } from "./game-board";
 import { Renderer } from "./types/renderer";
-import { ImageStore } from "./utils/images-repo";
+import { ImageStorage } from "./types/imagestorage";
+
+function getOrientation(name: string, orientation?: number): string {
+    if (!orientation || orientation === 1) {
+        return name;
+    }
+    return `${name}_${orientation}`;
+}
 
 interface ScenarioHex {
     row: number;
@@ -32,15 +39,12 @@ export class Scenario {
 
     _m44scen: M44;
     _scenariosHexMap: Map<number, Map<number, M44Hex>>;
-
-    _iconRepo: ImageStore<any>;
     _gameBoard: GameBoard;
 
-    constructor(board: GameBoard, m44: M44, iconRepo: ImageStore<any>) {
+    constructor(board: GameBoard, m44: M44) {
         this._m44scen = m44;
         this._gameBoard = board;
         this._scenariosHexMap = new Map();
-        this._iconRepo = iconRepo;
 
         for (const hex of m44.board.hexagons) {
             if (this._scenariosHexMap.has(hex.row)) {
@@ -160,28 +164,21 @@ export class Scenario {
 
     // Draw
 
-    async drawBackgroundLayer(ctx: Renderer<any, any>) {
+    async drawBackgroundLayer(ctx: Renderer<any, any>, imageStorage: ImageStorage<any>) {
         console.log(`[APP] Drawing board with '${this._m44scen.board.type}' size and with '${this._m44scen.board.face}' face`);
-        const iconRepo = this._iconRepo;
 
         // TODO: _board._board is ugly f*ck ! boardSize
         // await ctx.resize(this._board._board.rWidth, this._board._board.rHeight);
         for (const hexagon of this._gameBoard.all()) {
-            const backgroundImg = await iconRepo.get(hexagon.background);
+            const backgroundImg = await imageStorage.get(hexagon.background);
             await ctx.renderImage(backgroundImg, hexagon.posX, hexagon.posY);
         }
     }
 
-    async drawSceanrioLayer(ctx: Renderer<any, any>, conf: {
+    async drawSceanrioLayer(ctx: Renderer<any, any>, imageStorage: ImageStorage<any>, conf: {
         renderLayers: string[];
     }): Promise<void> {
         console.log("[APP] drawing scenario");
-        const iconRepo = this._iconRepo;
-        if (iconRepo === undefined) {
-            console.error("[APP] initIcons() not initialized");
-            throw new Error("init_iconss_not_initialized");
-        }
-
         if (conf.renderLayers.includes("lines")) {
             console.log("[APP] Drawing lines");
             for (const line of this._gameBoard._boardSize.lines) {
@@ -200,38 +197,45 @@ export class Scenario {
             const scenarioHex = this.getHex(hexagon.row, hexagon.col);
             if (scenarioHex.data.terrain) {
                 // render terrain instead of background
-                const terrainImg = await iconRepo.getRotated(scenarioHex.data.terrain.name, scenarioHex.data.terrain.orientation);
+                const imgName = getOrientation(
+                    scenarioHex.data.terrain.name,
+                    scenarioHex.data.terrain.orientation
+                );
+                const terrainImg = await imageStorage.get(imgName);
                 await ctx.renderImage(terrainImg, hexagon.posX, hexagon.posY);
             }
             if (scenarioHex.data) {
                 if (scenarioHex.data.rect_terrain && conf.renderLayers.includes("rect_terrain")) {
-                    const rectTerrainImg = await iconRepo.getRotated(scenarioHex.data.rect_terrain.name, scenarioHex.data.rect_terrain.orientation);
+                    const imgName = getOrientation(
+                        scenarioHex.data.rect_terrain.name,
+                        scenarioHex.data.rect_terrain.orientation
+                    );
+                    const rectTerrainImg = await imageStorage.get(imgName);
                     await ctx.renderImage(rectTerrainImg, hexagon.posX, hexagon.posY);
                 }
                 if (scenarioHex.data.obstacle && conf.renderLayers.includes("obstacle")) {
-                    const obstacleImg = await iconRepo.getRotated(scenarioHex.data.obstacle.name, scenarioHex.data.obstacle.orientation);
+                    const imgName = getOrientation(
+                        scenarioHex.data.obstacle.name,
+                        scenarioHex.data.obstacle.orientation
+                    );
+                    const obstacleImg = await imageStorage.get(imgName);
                     await ctx.renderImage(obstacleImg, hexagon.posX, hexagon.posY);
                 }
                 if (scenarioHex.data.unit && conf.renderLayers.includes("unit")) {
-                    const unitImg = await iconRepo.get(scenarioHex.data.unit.name);
+                    const unitImg = await imageStorage.get(scenarioHex.data.unit.name);
                     await ctx.renderImage(unitImg, hexagon.posX, hexagon.posY);
                     if (scenarioHex.data.unit.badge && conf.renderLayers.includes("badge")) {
-                        const badgeImg = await iconRepo.get(scenarioHex.data.unit.badge);
+                        const badgeImg = await imageStorage.get(scenarioHex.data.unit.badge);
                         await ctx.renderImage(badgeImg, hexagon.posX, hexagon.posY);
                     }
                 }
                 if (scenarioHex.data.tags && conf.renderLayers.includes("tags")) {
                     for (const tag of scenarioHex.data.tags) {
-                        const tagsImg = await iconRepo.get(tag.name);
+                        const tagsImg = await imageStorage.get(tag.name);
                         await ctx.renderImage(tagsImg, hexagon.posX, hexagon.posY);
                     }
                 }
             }
         }
-
-        // console.log(`[APP] scenario rendered successfully in ${this._measure.end()}ms`);
     }
-
-    // Model
-
 }
