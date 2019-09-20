@@ -1,7 +1,8 @@
 import { M44 } from "../shared/m44";
-import { GameBoard } from "./game-board";
 import { Scenario } from "./scenario";
 import { BoardSizes } from "../shared/board_size";
+import { PatternBoard } from "./boards/pattern-board";
+import { ImageBoard } from "./boards/image-board";
 import { defaultSceanrio } from "./default-scenario";
 
 export class Core {
@@ -14,25 +15,28 @@ export class Core {
         this._boardSizes = boardSizes;
     }
 
-    /**
-     * Create a Scenario Board
-     * @param size
-     * @param face
-     */
-    createBoard(size: "STANDARD" | "OVERLORD" | "BRKTHRU" | "SMALL", face: "WINTER" | "BEACH" | "COUNTRY" | "DESERT") {
-        const board = new GameBoard(this._boardSizes, {
-            face,
-            size
-        });
-        return board;
+    createBoard(
+        type: "PATTERN" | "IMAGE",
+        size: "STANDARD" | "OVERLORD" | "BRKTHRU" | "SMALL",
+        face: "WINTER" | "BEACH" | "COUNTRY" | "DESERT"
+    ) {
+        switch(type) {
+            case "IMAGE": {
+                const board = new ImageBoard(size, face, this._boardSizes);
+                return board;
+            }
+            case "PATTERN": {
+                const board = new PatternBoard(this._boardSizes, {
+                    face,
+                    size
+                });
+                return board;
+            }
+        }
     }
 
-    /**
-     * Create new M44 Scenario
-     * @param m44 scenario to load (you can use as template)
-     */
-    createScenario(board: GameBoard, m44: M44 = defaultSceanrio) {
-        const scenario = new Scenario(board, m44);
+    createScenario(m44: M44 = defaultSceanrio) {
+        const scenario = new Scenario(m44, this._boardSizes);
         return scenario;
     }
 

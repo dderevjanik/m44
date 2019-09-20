@@ -36,14 +36,19 @@ export class NodeCanvasRender implements Renderer<Buffer, Buffer> {
         this._font = fontPath;
     }
 
-    async renderImage(img: Buffer, x: number, y: number): Promise<void> {
+    async renderImage(img: Buffer, x: number, y: number, w?: number, h?: number): Promise<void> {
         const nImg = new Image();
         return new Promise((resolve, reject) => {
             nImg.onerror = (err) => {
                 reject(`error_during_loading_image ${err}`);
             };
             nImg.onload = () => {
-                this._ctx.drawImage(nImg, x, y);
+                if (w && h) {
+                    console.log(w, h);
+                    this._ctx.drawImage(nImg, x, y, w, h);
+                } else {
+                    this._ctx.drawImage(nImg, x, y);
+                }
                 resolve();
             };
             nImg.src = img;

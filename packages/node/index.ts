@@ -5,7 +5,8 @@ import { M44 } from "../shared/m44";
 import { NodeCanvasRender } from "./modules/node-canvas-render";
 
 import boardSizes from "../../board_sizes.json";
-import imagesDict from "../../images.json";
+import imagesDict from "../../images_sed.json";
+import iamgesBoardsDict from "../../images_boards.json";
 import imagesExtDict from "../../images_ext.json";
 import { ImageFileStorage } from "./modules/image-filestorage";
 
@@ -29,7 +30,8 @@ export class M44Node {
         // const boardSizes = fileLoader(boardSizesPath, BoardSizes);
         this._imgFileStorage =  new ImageFileStorage(this._conf.imageDir, {
             ...imagesDict,
-            ...imagesExtDict
+            ...imagesExtDict,
+            ...iamgesBoardsDict
         });
         this._app = new Core(
             boardSizes as any
@@ -45,15 +47,14 @@ export class M44Node {
         }
         const m44: M44 = fileLoader(filePath, M44);
         try  {
-            const board = this._app.createBoard(m44.board.type, m44.board.face);
-            const scenario = this._app.createScenario(board, m44);
+            const board = this._app.createBoard("PATTERN", m44.board.type, m44.board.face);
+            const scenario = this._app.createScenario(m44);
 
             const ctx = new NodeCanvasRender();
             await ctx.loadFont("32px Arial");
             await ctx.resize(...scenario.sizeR());
-
-            await scenario.drawBackgroundLayer(ctx, this._imgFileStorage);
-            await scenario.drawSceanrioLayer(ctx, this._imgFileStorage, {
+            await board.render(ctx, this._imgFileStorage);
+            await scenario.render(ctx, this._imgFileStorage, {
                 renderLayers: this._conf.renderLayers
             });
             // await this._app.drawBoard(ctx, { face: m44.board.face, size: m44.board.type });

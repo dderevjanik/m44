@@ -1,4 +1,7 @@
-import { BoardSizes, BoardSize } from "../shared/board_size";
+import { BoardSizes, BoardSize } from "../../shared/board_size";
+import { Renderer } from "../types/renderer";
+import { ImageStorage } from "../types/imagestorage";
+import { Renderable } from "../types/renderable";
 
 const BEACH: Array<[string, string]> = [
     // country
@@ -75,7 +78,7 @@ export interface BoardHex {
 /**
  * Used to determine x, y position in board of hexagons
  */
-export class GameBoard {
+export class PatternBoard implements Renderable {
 
     _conf: BoardConf;
     _boardSize: BoardSize;
@@ -98,24 +101,19 @@ export class GameBoard {
     /**
      * Get background for specific hex
      */
-    getBackground(row: number, col: number): string {
+    _getBackground(row: number, col: number): string {
         const r = row % this._pattern.length;
         const c = Math.floor(col / this._pattern[0].length) % this._pattern[0].length;
         return this._pattern[r][c];
     }
 
-    /**
-     * Iterate over all hexagons in board
-     * @desc Used to fill board background with background tilesets
-     */
-    *all(): IterableIterator<BoardHex> {
+    async render(ctx: Renderer<any, any>, imageStorage: ImageStorage<any>): Promise<void> {
+        console.log("[APP] drawing pattern board");
         for (const hexagon of this._boardSize.hexagons) {
-            yield {
-                ...hexagon,
-                background: this.getBackground(hexagon.row, hexagon.col),
-            };
+            const imgName = this._getBackground(hexagon.row, hexagon.col);
+            const img = await imageStorage.get(imgName);
+            await ctx.renderImage(img, hexagon.posX, hexagon.posY);
         }
-
     }
 
 }
